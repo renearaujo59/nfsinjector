@@ -35,7 +35,7 @@ Downloads
 
 - Magisk Developer - [Topjohnwu](https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445)
 - Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
-- @K1ks1
+- [K1ks](https://t.me/K1ks1)
 # Changelog 
 
 - NFS-INJECTOR V1.0 : 
