@@ -10,7 +10,7 @@ No to upload on additionals clouds
 
 ★[MODULE][NFS-INJECTOR][PowerFull And Advanced Management Kernel/Ram][pubgfix]
 
-https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231
+[XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
 # Requirements
 
@@ -20,7 +20,8 @@ https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231
 
 All NFS Members , without Their Help , NFS wouldn't be great 
 
-- https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x
+Downloads
+- [Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
 
 # Beta Members
 
@@ -28,12 +29,12 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 # NFS - Injector Telegram
 
-https://t.me/nfsinjector
+[Telegram Group](https://t.me/nfsinjector)
 
 # Credits 
 
-- Magisk Developer - Topjohnwu (https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445).
-- Unity Template Developers - Zackptg5 and Ahrion (https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
+- Magisk Developer - [Topjohnwu](https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445)
+- Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
 
 # Changelog 
 
