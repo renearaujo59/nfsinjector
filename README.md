@@ -24,7 +24,7 @@ No to upload on additionals clouds
 - Magisk v17+ (if not, it should install directly to system)
 
 ## Supporter Suggestions
-All NFS Members , without Their Help , NFS wouldn't be great 
+- All NFS Members , without Their Help , NFS wouldn't be great 
 
 ## Downloads
 - [Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
@@ -150,6 +150,3 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Total Revision of the NFS Engine 
 - Some Stuff removed
 - Update VM Kernel All Modes
- of the NFS Engine 
-Some Stuff removed ( Stune... )
-Update VM Kernel All Modesdes
