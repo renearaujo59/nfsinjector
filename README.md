@@ -13,24 +13,32 @@ This program is distributed in the hope that it will be useful
 I am not responsible for bricked devices, dead SD cards, corrupted partition, nuclear disasters
 No to upload on additionals clouds
 
-## Thread 
+## Introduction
+This module aim to improve kernel / ram management between efficiency and energy aware. Using a complex algorithm , it deteremine the most optimal settings between battery and performance for your device. NFS improve your overall experience , as well as specifically enhances PUBG performance , Others Games also. Very simple to use , You just install it and it will handle everything else. This tool is, in part proactive . It takes heavily into account , the amount of memory on your device , to calculate the appropriate values. Excellent multitasting and memory management.
 
+Improve Standby , as well as screen battery life - A smooth and fluid , overal enhanced , user experience 
+
+Fix PUBG Mobil Lag ( Others Games also ) 
+
+This Module is Universal , It works on all OS with all kernels ( HMP / EAS ). 
+
+# Thread 
 ★[MODULE][NFS-INJECTOR][PowerFull And Advanced Management Kernel/Ram][pubgfix]
 
 [XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
-## Requirements
-
+# Requirements
 - Magisk v17+ (if not, it should install directly to system)
+- [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
-## Supporter Suggestions
-- All NFS Members , without Their Help , NFS wouldn't be great 
+# Supporter Suggestions
+All NFS Members , without Their Help , NFS wouldn't be great 
 
 ## Downloads
-- [Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
+[Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
 
 ## Beta Members
-- @HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed , @D3ATHW15H 
+@HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed , @D3ATHW15H 
 
 ## NFS - Injector Telegram
 [Telegram Group](https://t.me/nfsinjector)
@@ -99,7 +107,12 @@ No to upload on additionals clouds
 - Update Network Speed 
 - Add Control Scheduler
 - Update Network Speed 
-- Add 3 Modes ( Game / Performance / Balance )
+- Added ability to change profiles 
+```
+0 : Balance Mode
+1 : Performance Mode
+2 : Game Mode
+```
 - Add DnsGuard DNS / DNS CloudFlare
 - Add Scale Up Animation 
 - Fix CPU Power
@@ -120,6 +133,12 @@ No to upload on additionals clouds
 - Add CodeName : Art_Light
 - Update Module to Unity V3
 - Add Battery Mode , All Modes Renammed
+```
+0 : Balance Mode
+1 : Ultra Mode
+2 : Game Mode
+3 : Battery Saver Mode
+```
 - Update All Values 
 - New Method Settings for TCP & SELinux 
 - Fix Zip Recognition by Magisk
@@ -135,9 +154,9 @@ No to upload on additionals clouds
 - Add CodeName : FireStorm
 - Update Governors Database ( See Support List Governors )
 - Update Cpu Power with Tunables values
-- Improve LMK For Battery_Saver & Balanced
+- Improve LMK For Battery Saver & Balanced
 - Stune Boost Reduction for Ultra & Gaming
-- Remove Battery_Stats features ( Useless ) 
+- Remove Battery Stats features ( Useless ) 
 - Bypassing Bad Info CPU Cores
 - Update Adj Custom in Memory Management
 - Adreno Idler Customs for Balance/Battery_Saver
