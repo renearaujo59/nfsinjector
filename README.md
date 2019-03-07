@@ -47,6 +47,7 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - NFS Developer - [K1ks](https://t.me/K1ks1)
 - Magisk Developer - [Topjohnwu](https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445)
 - Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
+- Like K1ks Work? Consider To [Donate](http://paypal.me/k1ksxda)😉
 
 ## Changelog 
 ### V1.0 
