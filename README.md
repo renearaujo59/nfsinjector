@@ -41,7 +41,7 @@ All NFS Members , without Their Help , NFS wouldn't be great
 @HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed , @D3ATHW15H 
 
 ## NFS - Injector Telegram
-Fell Free To Test NFS Beta [here](https://t.me/nfsinjector)
+Fell Free To Be Our Beta Tester [here](https://t.me/nfsinjector)
 
 ## Credits 
 - NFS Developer - [K1ks](https://t.me/K1ks1)
