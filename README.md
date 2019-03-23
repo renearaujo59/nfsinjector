@@ -6,7 +6,7 @@ A Magisk module which aims to improve kernel/RAM management, by using values bet
 Flash, and forget.
 
 <p align="center">
-<a href="https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231"><img src="https://img.shields.io/badge/XDA-Thread-orange.svg?style=flat-square"></a> <a href="https://t.me/nfsinjector"><img src="https://img.shields.io/badge/Telegram-Channel-blue.svg?style=flat-square"></a>
+<a href="https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231"><img src="https://img.shields.io/badge/XDA-Thread-orange.svg?style=flat-square"></a> <a href="https://t.me/nfsinjector"><img src="https://img.shields.io/badge/Telegram-Group-blue.svg?style=flat-square"></a> <a href="https://t.me/nfsreleases"><img src="https://img.shields.io/badge/Telegram-Channel-blue.svg?style=flat-square"></a>
 </p>
 
 This program is distributed in the hope that it will be useful
@@ -34,20 +34,19 @@ This Module is Universal , It works on all OS with all kernels ( HMP / EAS ).
 # Supporter Suggestions
 All NFS Members , without Their Help , NFS wouldn't be great 
 
-## Mirror
+## Downloads
 [Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
 
 ## Beta Members
-@HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed , @D3ATHW15H 
+@HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed
 
 ## NFS - Injector Telegram
-Fell Free To Test Beta Version [here](https://t.me/nfsinjector)
+[Telegram Group](https://t.me/nfsinjector)
 
 ## Credits 
 - NFS Developer - [K1ks](https://t.me/K1ks1)
 - Magisk Developer - [Topjohnwu](https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445)
 - Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
-- Like K1ks Work? Consider To [Donate](http://paypal.me/k1ksxda)😉
 
 ## Changelog 
 ### V1.0 
@@ -170,3 +169,13 @@ Fell Free To Test Beta Version [here](https://t.me/nfsinjector)
 - Total Revision of the NFS Engine 
 - Some Stuff removed
 - Update VM Kernel All Modes
+
+### V5.0
+- Add CodeName : Hunter
+- Update Minfree/Mfk in Ram Management
+- Update Gaming Mode 
+- Add Multi Mode Property
+- Script Restructuring ( Reorganizations )
+- Update To Unity 3.3
+- Update Compression Modules 
+- Thanks To @zackptg5 For fix Unity 3.3
