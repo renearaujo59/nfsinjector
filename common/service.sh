@@ -145,7 +145,7 @@ elif grep 'sioplus' $SA; then
 elif grep 'sio' $SA; then
  sch=sio 
 elif grep 'row' $SA; then
- sch=rowi
+ sch=row
 elif grep 'deadline' $SA; then
  sch=deadline
 elif grep 'noop' $SA; then
