@@ -1,23 +1,27 @@
 #========================================
 # NFS-INJECTOR
-# Codename : GodSpeed
-# Version : 4.5
+# Codename : HUNTER
+# Version : 5.0
 # Developer : @K1ks
-Date=02-03-2019
+Date=23-03-2019
 # Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
 #========================================
-## MODE USER
-# 0 = BALANCED
-# 1 = ULTRA ( Default )
+## MODE USER ( mode.txt )
+# 0 = BALANCED ( Def )
+# 1 = ULTRA 
 # 2 = GAMING
 # 3 = BATTERY_SAVER
-## DNS USER
-# 0 = OFF
+## ZRAM USER ( comp.txt )
+# 0 = AUTO ( Def )
+# 1 = ON
+# 2 = OFF
+## DNS USER ( dns.txt )
+# 0 = OFF ( Def )
 # 1 = DNS GUARD ( ADS )
 # 2 = DNS CLOUDFLARE ( SPEED )
 # 3 = DNS PUBLIC GOOGLE ( GENERAL+GAME )
-## SELIUX USER
-# 0 = PERMISSIVE
+## SELIUX USER ( linux.txt )
+# 0 = PERMISSIVE ( Def )
 # 1 = ENFORCING
 # SUPPORT GOVERNORS = pixel_schedutil helix_schedutil smurfutil_flex pixutil pwrutilx darkness schedutil blu_schedutil blu_active elementalx zzmoove interactivepro interactiveplus interactiveX interactive ondemand performance
 # SUPPORT SCHEDULER = anxiety fiops sioplus sio zen tripndroid row bfq cfq deadline noop
@@ -32,13 +36,12 @@ fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
 LOGMOUNT=/$NFS/nfsmount.log
-V=4.5
+V=5.0
 S=Stable
-Code=GodSpeed
-Code2=N/A
+Code=Hunter
 box=`busybox | awk 'NR==1{print $2}'` 2>/dev/null
-MEM=`free -m |  awk '/Mem:/{print $2}'`
-mem=`free |  grep Mem |  awk '{print $2}'`;
+MEM=`free -m | awk '/Mem:/{print $2}'`
+mem=`free | grep Mem |  awk '{print $2}'`;
 VENDOR=$(getprop ro.product.brand) 2>/dev/null
 ROM=$(getprop ro.build.display.id) 2>/dev/null
 KERNEL=$(uname -r) 2>/dev/null
@@ -47,6 +50,8 @@ SDK=$(getprop ro.build.version.sdk) 2>/dev/null
 MODE=`cat $NFS/mode.txt`;
 DNS=`cat $NFS/dns.txt`;
 SE=`cat $NFS/linux.txt`;
+CP=`cat $NFS/comp.txt`;
+FC=`cat /sys/kernel/fast_charge/force_fast_charge`;
 BATT=`cat /sys/class/power_supply/battery/capacity`;
 CHIP=$(getprop ro.product.board) 2>/dev/null
 CHIP1=$(getprop ro.product.platform) 2>/dev/null
@@ -80,7 +85,12 @@ if [ -e /sys/block/mmcblk0/queue/scheduler ]; then
  SA=/sys/block/mmcblk0/queue/scheduler
 elif [ -e /sys/block/sda/queue/scheduler ]; then
  SA=/sys/block/sda/queue/scheduler
+elif [ -d /sys/block/dm-0/queue/scheduler ]; then
+ SA=/sys/block/dm-0/queue/scheduler
+elif [ -d /sys/block/loop0/queue/scheduler ]; then
+ SA=/sys/block/loop0/queue/scheduler
 fi;
+
 if grep 'smurfutil_flex' $AGB; then
  gov=smurfutil_flex
 elif grep 'pixutil' $AGB; then
@@ -120,10 +130,10 @@ elif grep 'performance' $AGB; then
 fi;
 if grep 'anxiety' $SA; then 
  sch=anxiety
-elif grep 'tripndroid' $SA; then
- sch=tripndroid
 elif grep 'zen' $SA; then
  sch=zen
+elif grep 'tripndroid' $SA; then
+ sch=tripndroid
 elif grep 'cfq' $SA; then
  sch=cfq
 elif grep 'bfq' $SA; then
@@ -135,7 +145,7 @@ elif grep 'sioplus' $SA; then
 elif grep 'sio' $SA; then
  sch=sio 
 elif grep 'row' $SA; then
- sch=row
+ sch=rowi
 elif grep 'deadline' $SA; then
  sch=deadline
 elif grep 'noop' $SA; then
@@ -150,6 +160,11 @@ elif  grep -l 'cubic' $TACC; then
 else
  tcp=reno
 fi;
+if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then	
+ if [ -e /sys/class/power_supply/battery/batt_slate_mode ]; then	
+ echo "0" > /sys/class/power_supply/battery/batt_slate_mode
+ fi;
+fi;
 
 # WAITING TIME =========================================#
 
@@ -162,28 +177,13 @@ if [ -e $LOG ]; then
  rm $LOG;
 fi;
 
-echo "==========================================================" | tee -a $LOG;
-echo "//////// ϟ NFS-INJECTOR(TM) LOGGING SYSTEM ϟ ~~ " |  tee -a $LOG;
-echo "//////// UNIVERSAL MAGISK MODULE ~~ " |  tee -a $LOG;
-echo "//////// CodeName : $Code ~~ " |  tee -a $LOG;
-echo "//////// CodeTest : $Code2 ~~ " |  tee -a $LOG;
-echo "//////// Version : $V ~~ " |  tee -a $LOG;
-echo "//////// Status : $S ~~ " |  tee -a $LOG;
-echo "//////// Date : $Date ~~ " |  tee -a $LOG;
-echo "" | tee -a $LOG;
-echo "==========================================================" | tee -a $LOG;
-echo "* START : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
-echo "" | tee -a $LOG;
-echo "** Vendor : $VENDOR *" | tee -a $LOG;
-echo "** Device : $APP *" | tee -a $LOG;
-echo "** Soc : $SOC *" | tee -a $LOG;
-echo "** Rom : $ROM *" | tee -a $LOG;
-echo "** Android : $(getprop ro.build.version.release) *" | tee -a $LOG;
-echo "** Sdk : $SDK *" | tee -a $LOG;
-echo "** Kernel : $KERNEL *" | tee -a $LOG;
-echo "** Busybox  : $box *" | tee -a $LOG;
-echo "** Battery Level : $BATT % *" | tee -a $LOG;
-echo "" | tee -a $LOG;
+# CHECK INVADER =========================================#
+
+if [ -e /sbin/.core/img/legendary_kernel_tweaks ]; then
+ INVADER
+elif [ -e /data/LKT.prop ]; then
+ INVADER
+fi;
 
 # CONFIGURATION =========================================#
 
@@ -205,36 +205,55 @@ fi;
 if [ ! -e $NFS/linux.txt ]; then
  echo "0" > $NFS/linux.txt
 fi;
-
-if [ -d /data/data/com.kerneladiutor.mod ]; then 
- echo "* Kernel Adiutor Mod = Installed *" | tee -a $LOG;
+if [ ! -e $NFS/comp.txt ]; then
+ echo "0" > $NFS/comp.txt
 fi;
-if [ -d /data/data/com.grarak.kerneladiutor ]; then 
- echo "* Kernel Adiutor = Installed *" | tee -a $LOG;
-fi;
-if [ -d /data/data/flar2.exkernelmanager ]; then 
- echo "* Ex Kernel = Installed *" | tee -a $LOG;
-fi;
-
 if [ "$MEM" -lt 2560 ]; then
  RAMCAP=0
- echo "* Low Ram Detected $MEM Mb *" | tee -a $LOG;
-elif [ "$MEM" -lt 4096 ]; then
- RAMCAP=1
- echo "* Middle Ram Detected $MEM Mb *" | tee -a $LOG;
 else
  RAMCAP=1
- echo "* High Ram Detected $MEM Mb *" | tee -a $LOG;
 fi;
 
+# LOGGING =========================================#
+
+echo "================================================" | tee -a $LOG;
+echo "//////// ϟ NFS-INJECTOR(TM) LOGGING SYSTEM ϟ ~~ " |  tee -a $LOG;
+echo "//////// UNIVERSAL MAGISK MODULE ~~ " |  tee -a $LOG;
+echo "//////// CodeName : $Code ~~ " |  tee -a $LOG;
+echo "//////// Version : $V ~~ " |  tee -a $LOG;
+echo "//////// Status : $S ~~ " |  tee -a $LOG;
+echo "//////// Date : $Date ~~ " |  tee -a $LOG;
+echo "================================================" | tee -a $LOG;
+echo "* START : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
+echo "** Vendor : $VENDOR *" | tee -a $LOG;
+echo "** Device : $APP *" | tee -a $LOG;
+echo "** Soc : $SOC *" | tee -a $LOG;
+echo "** Rom : $ROM *" | tee -a $LOG;
+echo "** Android : $(getprop ro.build.version.release) *" | tee -a $LOG;
+echo "** Sdk : $SDK *" | tee -a $LOG;
+echo "** Kernel : $KERNEL *" | tee -a $LOG;
+echo "** Ram : $MEM Mb *" | tee -a $LOG;
+echo "** Busybox  : $box *" | tee -a $LOG;
+echo "** Battery Level : $BATT % *" | tee -a $LOG;
+if [ -d /data/data/com.kerneladiutor.mod ]; then 
+ echo "** Kernel Adiutor Mod : Installed *" | tee -a $LOG;
+fi;
+if [ -d /data/data/com.grarak.kerneladiutor ]; then 
+ echo "** Kernel Adiutor : Installed *" | tee -a $LOG;
+fi;
+if [ -d /data/data/flar2.exkernelmanager ]; then 
+ echo "** Ex Kernel : Installed *" | tee -a $LOG;
+fi;
+
+echo "" | tee -a $LOG;
 if [ $MODE -eq "2" ]; then
- echo "* Gaming Mode *" | tee -a $LOG;
+ echo "* GAMING MODE = Initialized *" | tee -a $LOG;
 elif [ $MODE -eq "1" ]; then
- echo "* Ultra Mode *" | tee -a $LOG;
+ echo "* ULTRA MODE = Initialized *" | tee -a $LOG;
 elif [ $MODE -eq "3" ]; then
- echo "* Battery Saver Mode *" | tee -a $LOG;
+ echo "* BATTERY SAVER MODE = Initialized *" | tee -a $LOG;
 else
- echo "* Balanced Mode *" | tee -a $LOG;
+ echo "* BALANCED MODE = Initialized *" | tee -a $LOG;
 fi;
 
 # SELINUX PERMISSIVE =========================================#
@@ -268,6 +287,163 @@ elif [ -e /sys/module/mmc_core/parameters/use_spi_crc ]; then
  MC=/sys/module/mmc_core/parameters/use_spi_crc
  echo "N" > $MC
  MMC
+fi;
+
+# VM TWEAKS =========================================#
+
+sync;
+chmod 0644 /proc/sys/*; 2>/dev/null
+
+if [ "$MODE" -eq "2" ]; then
+ sysctl -e -w vm.dirty_background_ratio=3 2>/dev/null
+ sysctl -e -w vm.dirty_ratio=15 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=150 2>/dev/null
+ sysctl -e -w vm.laptop_mode=0 2>/dev/null
+elif [ "$MODE" -eq "1" ]; then
+ sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
+ sysctl -e -w vm.dirty_ratio=70 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
+ sysctl -e -w vm.laptop_mode=1 2>/dev/null
+elif [ "$MODE" -eq "3" ]; then
+ sysctl -e -w vm.dirty_background_ratio=5 2>/dev/null
+ sysctl -e -w vm.dirty_ratio=20 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
+ sysctl -e -w vm.laptop_mode=1 2>/dev/null
+else
+ sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
+ sysctl -e -w vm.dirty_ratio=70 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
+ sysctl -e -w vm.laptop_mode=1 2>/dev/null
+fi;
+sysctl -e -w vm.oom_kill_allocating_task=0 2>/dev/null
+sysctl -e -w vm.block_dump=0 2>/dev/null
+sysctl -e -w vm.overcommit_memory=1 2>/dev/null
+sysctl -e -w vm.oom_dump_tasks=1 2>/dev/null
+sysctl -e -w vm.dirty_writeback_centisecs=0 2>/dev/null
+sysctl -e -w vm.dirty_expire_centisecs=0 2>/dev/null
+sysctl -e -w fs.lease-break-time=5 2>/dev/null
+sysctl -e -w fs.leases-enable=1 2>/dev/null
+sysctl -e -w fs.dir-notify-enable=0 2>/dev/null
+sysctl -e -w vm.compact_memory=1 2>/dev/null
+sysctl -e -w vm.compact_unevictable_allowed=1 2>/dev/null
+sysctl -e -w vm.swappiness=0 2>/dev/null
+sysctl -e -w vm.page-cluster=0 2>/dev/null
+sysctl -e -w vm.laptop_mode=0 2>/dev/null
+echo "* VM Kernel = Activated *" |  tee -a $LOG;
+
+# KILL DEBUGGING =========================================#
+
+sysctl -e -w vm.panic_on_oom=0 2>/dev/null
+sysctl -e -w kernel.panic_on_oops=0 2>/dev/null
+sysctl -e -w kernel.panic=0 2>/dev/null
+echo "* Kill Debugging = Activated *" |  tee -a $LOG;
+
+# Low Memory Killer =========================================#
+
+if [ "$MODE" -eq "2" ]; then
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
+ CR=$((($MEM*11/100)*1024/4));
+ EP=$((($MEM*21/100)*1024/4));  
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ MFK=$(($MEM*7))
+elif [ "$MODE" -eq "1" ]; then
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
+ CR=$((($MEM*11/100)*1024/4));
+ EP=$((($MEM*21/100)*1024/4)); 
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ MFK=$(($MEM*7))
+elif [ "$MODE" -eq "3" ]; then
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
+ CR=$((($MEM*10/100)*1024/4));
+ EP=$((($MEM*13/100)*1024/4));
+ ADJ1=0; ADJ2=100; ADJ3=200; ADJ4=300; ADJ5=900; ADJ6=906 # STOCK
+ MFK=$(($MEM*3))
+else
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
+ CR=$((($MEM*10/100)*1024/4));
+ EP=$((($MEM*13/100)*1024/4));
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ MFK=$(($MEM*5))
+fi;
+
+if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
+ chmod 0666 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk;
+ echo "0" > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
+ setprop lmk.autocalc false;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/debug_level ]; then
+ chmod 666 /sys/module/lowmemorykiller/parameters/debug_level;
+ echo "0" > /sys/module/lowmemorykiller/parameters/debug_level;
+fi;
+if [ -e  /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
+ chmod 0666  /sys/module/lowmemorykiller/parameters/oom_reaper;
+ echo "1" >  /sys/module/lowmemorykiller/parameters/oom_reaper
+fi;
+
+chmod 0666 /sys/module/lowmemorykiller/parameters/adj;
+chmod 0666 /sys/module/lowmemorykiller/parameters/minfree;
+echo "$ADJ1,$ADJ2,$ADJ3,$ADJ4,$ADJ5,$ADJ6" > /sys/module/lowmemorykiller/parameters/adj;
+echo "$FP,$VP,$SR,$HP,$CR,$EP" > /sys/module/lowmemorykiller/parameters/minfree;
+
+MFK1=$(($MFK/2))
+sysctl -e -w vm.min_free_kbytes=$MFK;
+
+if [ -e /proc/sys/vm/extra_free_kbytes ]; then
+ sysctl -e -w vm.extra_free_kbytes=$MFK1;
+ setprop sys.sysctl.extra_free_kbytes $MFK1;
+fi;
+echo "* Low Memory Killer = Activated *" |  tee -a $LOG;
+
+# PROPERTY  =========================================#
+
+if [ "$MODE" -eq "2" ]; then
+setprop MIN_HIDDEN_APPS false
+setprop ACTIVITY_INACTIVE_RESET_TIME false
+setprop MIN_RECENT_TASKS false
+setprop PROC_START_TIMEOUT false
+setprop CPU_MIN_CHECK_DURATION false
+setprop GC_TIMEOUT false
+setprop SERVICE_TIMEOUT false
+setprop MIN_CRASH_INTERVAL false
+setprop ENFORCE_PROCESS_LIMIT false
+setprop persist.sys.NV_FPSLIMIT 90
+setprop persist.sys.NV_POWERMODE 1
+setprop persist.sys.NV_PROFVER 15
+setprop persist.sys.NV_STEREOCTRL 0
+setprop persist.sys.NV_STEREOSEPCHG 0
+setprop persist.sys.NV_STEREOSEP 20
+setprop persist.sys.use_16bpp_alpha 1
+setprop debug.egl.swapinterval -60
+echo "* Gaming Property = Activated *" |  tee -a $LOG;
+elif [ "$MODE" -eq "1" ]; then
+setprop MIN_HIDDEN_APPS false
+setprop ACTIVITY_INACTIVE_RESET_TIME false
+setprop MIN_RECENT_TASKS false
+setprop PROC_START_TIMEOUT false
+setprop CPU_MIN_CHECK_DURATION false
+setprop GC_TIMEOUT false
+setprop SERVICE_TIMEOUT false
+setprop MIN_CRASH_INTERVAL false
+setprop ENFORCE_PROCESS_LIMIT false
+echo "* Ultra Property = Activated *" |  tee -a $LOG;
+elif [ "$MODE" -eq "3" ]; then
+setprop enforce_process_limit 4
+echo "* Battery Saving Property = Activated *" |  tee -a $LOG;
+else
+setprop ENFORCE_PROCESS_LIMIT false
+echo "* Balanced Property = Activated *" |  tee -a $LOG;
 fi;
 
 # CPU_BOOST  =========================================#
@@ -378,7 +554,7 @@ else
  fi;
 fi;
 
-# =========================================#
+#=========================================#
 
 if [ -e /sys/module/msm_performance/parameters/touchboost ]; then
  chmod 0644 /sys/module/msm_performance/parameters/touchboost
@@ -402,127 +578,10 @@ if [ -e /sys/power/pnpmgr/touch_boost ]; then
  echo "* Touch_Boost PNP = Disabled *" | tee  -a $LOG
 fi; 
 
-# VM TWEAKS =========================================#
-
-sync;
-chmod 0644 /proc/sys/*; 2>/dev/null
-
-if [ "$MODE" -eq "2" ]; then
- sysctl -e -w vm.dirty_background_ratio=5 2>/dev/null
- sysctl -e -w vm.dirty_ratio=10 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=0 2>/dev/null
-elif [ "$MODE" -eq "1" ]; then
- sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
- sysctl -e -w vm.dirty_ratio=70 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=100 2>/dev/null
- sysctl -e -w vm.laptop_mode=1 2>/dev/null
-elif [ "$MODE" -eq "3" ]; then
- sysctl -e -w vm.dirty_background_ratio=5 2>/dev/null
- sysctl -e -w vm.dirty_ratio=20 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=2 2>/dev/null  
-else
- sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
- sysctl -e -w vm.dirty_ratio=70 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=1 2>/dev/null
-fi;
-sysctl -e -w vm.oom_kill_allocating_task=0 2>/dev/null
-sysctl -e -w vm.block_dump=0 2>/dev/null
-sysctl -e -w vm.overcommit_ratio=0 2>/dev/null
-sysctl -e -w vm.oom_dump_tasks=1 2>/dev/null
-sysctl -e -w vm.dirty_writeback_centisecs=0 2>/dev/null
-sysctl -e -w vm.dirty_expire_centisecs=0 2>/dev/null
-sysctl -e -w fs.lease-break-time=5 2>/dev/null
-sysctl -e -w fs.leases-enable=1 2>/dev/null
-sysctl -e -w fs.dir-notify-enable=0 2>/dev/null
-sysctl -e -w vm.compact_memory=1 2>/dev/null
-sysctl -e -w vm.compact_unevictable_allowed=1 2>/dev/null
-sysctl -e -w vm.swappiness=0 2>/dev/null
-sysctl -e -w vm.page-cluster=0 2>/dev/null
-echo "* VM Kernel = Activated *" |  tee -a $LOG;
-
-# KILL DEBUGGING =========================================#
-
-sysctl -e -w vm.panic_on_oom=0 2>/dev/null
-sysctl -e -w kernel.panic_on_oops=0 2>/dev/null
-sysctl -e -w kernel.panic=0 2>/dev/null
-echo "* Kill Debugging = Activated *" |  tee -a $LOG;
-
-# HEAPMINFREE ( improves first launch latencies , 512k stock ) =========================================#
-
-setprop dalvik.vm.heapminfree 2m
-echo "* Improves First Launch Latencies = Activated *" |  tee -a $LOG;
-
-# Low Memory Killer =========================================#
-
-ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000
-
-if [ "$MODE" -eq "2" ]; then
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*21/100)*1024/4)); 
- KB=$(($MEM*2/5))
-elif [ "$MODE" -eq "1" ]; then
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*21/100)*1024/4));
- KB=$(($MEM*2/5))
-elif [ "$MODE" -eq "3" ]; then
- FP=$((($MEM*2/100)*1024/4));
- VP=$((($MEM*3/100)*1024/4));
- SR=$((($MEM*4/100)*1024/4));
- HP=$((($MEM*7/100)*1024/4));
- CR=$((($MEM*9/100)*1024/4));
- EP=$((($MEM*11/100)*1024/4));
- KB=$(($MEM*2/10))
-else
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*10/100)*1024/4));
- EP=$((($MEM*13/100)*1024/4));   
- KB=$(($MEM*2/7))
-fi;
-if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
- chmod 0666 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk;
- echo "0" > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
- setprop lmk.autocalc false;
-fi;
-if [ -e /sys/module/lowmemorykiller/parameters/debug_level ]; then
- chmod 666 /sys/module/lowmemorykiller/parameters/debug_level;
- echo "0" > /sys/module/lowmemorykiller/parameters/debug_level;
-fi;
-if [ -e  /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
- chmod 0666  /sys/module/lowmemorykiller/parameters/oom_reaper;
- echo "1" >  /sys/module/lowmemorykiller/parameters/oom_reaper
-fi;
-chmod 0666 /sys/module/lowmemorykiller/parameters/adj;
-chmod 0666 /sys/module/lowmemorykiller/parameters/minfree;
-echo "$ADJ1,$ADJ2,$ADJ3,$ADJ4,$ADJ5,$ADJ6" > /sys/module/lowmemorykiller/parameters/adj;
-echo "$FP,$VP,$SR,$HP,$CR,$EP" > /sys/module/lowmemorykiller/parameters/minfree;
-
-MFK=$(($MEM*5/2))
-MFK1=$(($MFK/2))
-sysctl -e -w vm.min_free_kbytes=$MFK;
-
-if [ -e /proc/sys/vm/extra_free_kbytes ]; then
- sysctl -e -w vm.extra_free_kbytes=$MFK1;
- setprop sys.sysctl.extra_free_kbytes $MFK1;
-fi;
-echo "* Low Memory Killer = Activated *" |  tee -a $LOG;
-
 # I/O SCHED =========================================#
 
 MMC=`ls -d /sys/block/mmc*`;
+DM=`ls -d /sys/block/dm-*`;
 SD=`ls -d /sys/block/sd*`;
 LOOP=`ls -d /sys/block/loop*`;
 RAM=`ls -d /sys/block/ram*`;
@@ -551,7 +610,7 @@ else
  KB=$(($MEM*2/7))
 fi;
 
-for X in $MMC $SD $LOOP $RAM $ZRAM
+for X in $MMC $SD $DM $LOOP $RAM $ZRAM
 do
  echo "$SCH" > $X/queue/scheduler 2>/dev/null
  echo "0" > $X/queue/rotational 2>/dev/null
@@ -575,7 +634,7 @@ for I in `find /sys/devices/platform -name iostats`;
 do  
  echo "0" > $I;
 done
-echo "* I/O Scheduler $SCH = Tuned *" |  tee -a $LOG;
+echo "* I/O Scheduler $SCH = Activated *" |  tee -a $LOG;
 
 # CPU POWER =========================================#
 
@@ -992,8 +1051,8 @@ else
 TUNE=Not_Tuned
 fi;
 
-chmod 0444 $ML/*
-chmod 0444 $MB/*
+chmod 0444 $ML
+chmod 0444 $MB
 echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
 }
 
@@ -1355,8 +1414,8 @@ else
 TUNE=Not_Tuned
 fi;
 
-chmod 0444 $ML/*
-chmod 0444 $MB/*
+chmod 0444 $ML
+chmod 0444 $MB
 echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
 }
 
@@ -1682,8 +1741,8 @@ else
 TUNE=Not_Tuned
 fi;
 
-chmod 0444 $ML/*
-chmod 0444 $MB/*
+chmod 0444 $ML
+chmod 0444 $MB
 echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
 }
 
@@ -1695,6 +1754,147 @@ elif [ "$MODE" -eq "3" ]; then
  CPUBATTERY
 else
  CPUBALANCE
+fi;
+
+# ZRAM ZSWAP CONFIGURATION =========================================#
+# Function 
+
+swapOFF() {
+if [ -e /dev/block/zram0 ]; then
+ swapoff /dev/block/zram0
+ setprop vnswap.enabled false
+ setprop ro.config.zram false
+ setprop ro.config.zram.support false
+ setprop zram.disksize 0
+ echo "* ZRAM0 = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /dev/block/zram1 ]; then
+ swapoff /dev/block/zram1
+ setprop vnswap.enabled false
+ setprop ro.config.zram false
+ setprop ro.config.zram.support false
+ setprop zram.disksize 0
+ echo "* ZRAM1 = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /dev/block/zram2 ]; then
+ swapoff /dev/block/zram2
+ setprop vnswap.enabled false
+ setprop ro.config.zram false
+ setprop ro.config.zram.support false
+ setprop zram.disksize 0
+ echo "* ZRAM2 = Disabled *" |  tee -a $LOG;
+fi;
+}
+
+swapON() {
+if [ -e /dev/block/zram0 ]; then
+ swapoff /dev/block/zram0
+ echo "1" > /sys/block/zram0/reset
+ echo "$((ZR*1024*1024))" > /sys/block/zram0/disksize 
+ mkswap /dev/block/zram0
+ swapon /dev/block/zram0
+ sysctl -e -w vm.swappiness=20
+ setprop vnswap.enabled true
+ setprop ro.config.zram true
+ setprop ro.config.zram.support true
+ setprop zram.disksize $ZR
+ echo "* ZRAM0 = Activated for $ZR MB *" |  tee -a $LOG;
+fi;
+if [ -e /dev/block/zram1 ]; then
+ swapoff /dev/block/zram1
+ echo "1" > /sys/block/zram1/reset
+ echo "$((ZR*1024*1024))" > /sys/block/zram1/disksize 
+ mkswap /dev/block/zram1
+ swapon /dev/block/zram1
+ sysctl -e -w vm.swappiness=20
+ setprop vnswap.enabled true
+ setprop ro.config.zram true
+ setprop ro.config.zram.support true
+ setprop zram.disksize $ZR
+ echo "* ZRAM1 = Activated for $ZR MB *" |  tee -a $LOG;
+fi;
+if [ -e /dev/block/zram2 ]; then
+ swapoff /dev/block/zram2
+ echo "1" > /sys/block/zram2/reset
+ echo "$((ZR*1024*1024))" > /sys/block/zram2/disksize 
+ mkswap /dev/block/zram2
+ swapon /dev/block/zram2
+ sysctl -e -w vm.swappiness=20
+ setprop vnswap.enabled true
+ setprop ro.config.zram true
+ setprop ro.config.zram.support true
+ setprop zram.disksize $ZR
+ echo "* ZRAM2 = Activated for $ZR MB *" |  tee -a $LOG;
+fi;
+}
+
+zswapON() {
+if [ -e /sys/module/zswap/parameters/enabled ]; then
+ if [ -e /sys/module/zswap/parameters/enabled ]; then
+  echo "Y" > /sys/module/zswap/parameters/enabled
+ fi;
+ if [ -e /sys/module/zswap/parameters/max_pool_percent ]; then
+  echo "30" > /sys/module/zswap/parameters/max_pool_percent
+ fi;
+ sysctl -e -w vm.swappiness=30
+ echo "* ZSwap = Activated *" |  tee -a $LOG; 
+fi;
+}
+
+zswapOFF() {
+if [ -e /sys/module/zswap/parameters/enabled ]; then
+ echo "N" > /sys/module/zswap/parameters/enabled
+ echo "* ZSwap = Disabled *" |  tee -a $LOG; 
+fi;
+}
+ 
+if [ "$MODE" -eq "2" ]; then
+ ZR=$(($MEM/2))
+elif [ "$MODE" -eq "1" ]; then
+ ZR=$(($MEM/2))
+elif [ "$MODE" -eq "3" ]; then
+ ZR=$(($MEM/4))
+else
+ ZR=$(($MEM/3))
+fi;
+ 
+if [ "$CP" -eq "1" ]; then
+ swapON 2>/dev/null
+ zswapON 2>/dev/null
+elif [ "$CP" -eq "2" ]; then
+ swapOFF 2>/dev/null
+ zswapOFF 2>/dev/null
+elif [ "$CP" -eq "0" ]; then
+ if [ "$RAMCAP" -eq "0" ]; then
+  swapON 2>/dev/null
+  zswapON 2>/dev/null
+ else
+  swapOFF 2>/dev/null
+  zswapOFF 2>/dev/null
+ fi;
+fi;
+
+if [ -e /sys/kernel/mm/uksm/run ]; then
+ echo "0" > /sys/kernel/mm/uksm/run;
+ setprop ro.config.ksm.support false;
+ echo "* UKSM = Disabled *" |  tee -a $LOG; 
+elif [ -e /sys/kernel/mm/ksm/run ]; then
+ echo "0" > /sys/kernel/mm/ksm/run;
+ setprop ro.config.ksm.support false;
+ echo "* KSM = Disabled *" |  tee -a $LOG;
+fi;
+
+# DEEP SLEEP ENHANCEMENT =========================================#
+
+for i in $(ls /sys/class/scsi_disk/); do
+ echo "temporary none" > /sys/class/scsi_disk/"$i"/cache_type
+ if [ -e /sys/class/scsi_disk/"$i"/cache_type ]; then
+  DP=1
+ fi;
+done
+
+if [ "$DP" -eq "1" ]; then
+ echo "* Deep Sleep Enhancement = Fixed *" |  tee -a $LOG;
 fi;
 
 # KERNEL TASK  =========================================#
@@ -1710,7 +1910,7 @@ CC=$(cat $NFS/tcp.txt);
 echo "$CC" > /proc/sys/net/ipv4/tcp_congestion_control 
 echo "* Network TCP $CC = Activated *" |  tee -a $LOG;
 
-# GUARD / CLOUDFLARE / GOOGLE DNS =========================================#
+# GUARD / CLOUDFLARE / GOOGLE =========================================#
 
 if [ $DNS -eq "1" ]; then
  # IPTABLE 
@@ -1804,97 +2004,6 @@ elif [ $DNS -eq "3" ]; then
  echo "* Google Public DNS = Enabled *" | tee -a $LOG; 
 fi;	
 
-# UKSM/KSM OFF=========================================#
-
-if [ -e /sys/kernel/mm/uksm/run ]; then
- echo "0" > /sys/kernel/mm/uksm/run;
- setprop ro.config.ksm.support false;
- echo "* UKSM = Disabled *" |  tee -a $LOG; 
-elif [ -e /sys/kernel/mm/ksm/run ]; then
- echo "0" > /sys/kernel/mm/ksm/run;
- setprop ro.config.ksm.support false;
- echo "* KSM = Disabled *" |  tee -a $LOG;
-fi;
-
-# ZRAM  =========================================#
-ALG=lz4
-ZR=$(($MEM/4))
-
-if [ "$RAMCAP" -eq "1" ]; then
- if [ -e /sys/block/zram0/disksize ]; then
-  swapoff /dev/block/zram0 > /dev/null 2>&1; 
-  echo "0" > /sys/block/zram0/disksize;
-  echo "* ZRAM Sector 0 = Disabled *" |  tee -a $LOG;
- fi;
- if [ -e /sys/block/zram1/disksize ]; then
-  swapoff /dev/block/zram1 > /dev/null 2>&1;
-  echo "0" > /sys/block/zram1/disksize;
-  echo "* ZRAM Sector 1 = Disabled *" |  tee -a $LOG;
- fi;
-else
- if [ -e /sys/block/zram0/reset ]; then
-  echo "1" > /sys/block/zram0/reset;
-  echo "$((ZR*1024*1024))" > /sys/block/zram0/disksize
-  mkswap /dev/block/zram0 > /dev/null 2>&1;
-  swapon /dev/block/zram0 > /dev/null 2>&1;
-  setprop ro.config.zram.support true
-  setprop zram.disksize $ZR
-  if [ -e /sys/block/zram0/comp_algorithm ]; then
-   echo "$ALG" > /sys/block/zram0/comp_algorithm
-  fi;
-  if [ -e /sys/block/zram0/max_comp_streams ]; then
-   echo "4" > /sys/block/zram0/max_comp_streams
-  fi;
-  sysctl -e -w vm.swappiness=30
-  sysctl -e -w vm.page-cluster=2
-  echo "* ZRAM Sector 0 = Activated for $ZR MB *" |  tee -a $LOG;
- fi;
- if [ -e /sys/block/zram1/reset ]; then
-  echo "1" > /sys/block/zram1/reset;
-  echo "$((ZR*1024*1024))" > /sys/block/zram1/disksize
-  mkswap /dev/block/zram1 > /dev/null 2>&1;
-  swapon /dev/block/zram1 > /dev/null 2>&1;
-  setprop ro.config.zram.support true
-  setprop zram.disksize $ZR
-  if [ -e /sys/block/zram1/comp_algorithm ]; then
-   echo "$ALG" > /sys/block/zram1/comp_algorithm
-  fi;
-  if [ -e /sys/block/zram1/max_comp_streams ]; then
-   echo "4" > /sys/block/zram1/max_comp_streams
-  fi;
-  sysctl -e -w vm.swappiness=30
-  sysctl -e -w vm.page-cluster=2 
-  echo "* ZRAM (1) = Activated for $ZR MB *" |  tee -a $LOG;
- fi;
-fi;
-
-# ZSWAP =========================================#
-
-if [ "$RAMCAP" -eq "1" ]; then
- if [ -e /sys/module/zswap/parameters/enabled ]; then
-  echo "N" > /sys/module/zswap/parameters/enabled
-  echo "* ZSwap = Disabled *" |  tee -a $LOG; 
- fi; 
-else
- if [ -e /sys/module/zswap/parameters/enabled ]; then
-  if [ -e /sys/module/zswap/parameters/enabled ]; then
-   echo "Y" > /sys/module/zswap/parameters/enabled
-  fi;
-  if [ -e /sys/module/zswap/parameters/compressor ]; then
-   echo "$ALG" > /sys/module/zswap/parameters/compressor
-  fi;
-  if [ -e /sys/module/zswap/parameters/max_pool_percent ]; then
-   echo "30" > /sys/module/zswap/parameters/max_pool_percent
-  fi;
-  if [ -e /sys/module/zswap/parameters/zpool ]; then
-   echo "z3fold" > /sys/module/zswap/parameters/zpool
-  fi;
-  sysctl -e -w vm.swappiness=30
-  sysctl -e -w vm.page-cluster=2
-  echo "* ZSwap = Activated *" |  tee -a $LOG; 
- fi;
-fi;
-
 # FIX GP SERVICES =========================================#
 
 pm enable com.google.android.gms/.update.SystemUpdateActivity
@@ -1936,16 +2045,9 @@ if [ -e /sys/module/wakeup/parameters/enable_bluetooth_timer ]; then
 fi;
 
 if [ -e /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
- echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;[timerfd];hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+ echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;[timerfd];hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
  echo "* Boeffla_Wakelock_Blocker = Activated *" |  tee -a $LOG;
 fi;
-
-# DEEP SLEEP ENHANCEMENT =========================================#
-
-for i in $(ls /sys/class/scsi_disk/); do
- echo "temporary none" > /sys/class/scsi_disk/"$i"/cache_type;
- echo "* Deep Sleep Enhancement = Activated *" |  tee -a $LOG;
-done
 
 # KERNEL / MODULES / MASKS DEBUGGERS OFF =========================================#
 
@@ -1981,10 +2083,6 @@ echo "* Useless Debuggers = Disabled *" |  tee -a $LOG;
 if [ -e /sys/class/lcd/panel/power_reduce ]; then
  echo "* LCD Power = Activated *" |  tee -a $LOG	
  echo "1" > /sys/class/lcd/panel/power_reduce
-fi;
-if [ -e /sys/kernel/fast_charge/force_fast_charge ]; then
- echo "* Fast Charge = Activated *" |  tee -a $LOG	
- echo "1" > /sys/kernel/fast_charge/force_fast_charge
 fi;
 
 if [ "$MODE" -eq "2" ]; then
@@ -2049,6 +2147,18 @@ else
  fi;
 fi;
 
+# FAST CHARGE =========================================#
+
+if [ "$FC" -eq "2" ]; then	
+ echo "* Fast Charge 1 = Activated *" |  tee -a $LOG
+elif [ "$FC" -eq "1" ]; then	
+ echo "* Fast Charge 2 = Activated *" |  tee -a $LOG
+fi;
+
+if [ `cat /sys/kernel/fast_charge/screen_on_current_limit` -eq "0" ]; then	
+ echo "* Screen On Current Limit = Exceeded *" |  tee -a $LOG
+fi;
+
 # FSYNC OFF =========================================#
 
 if [ -e /sys/kernel/dyn_fsync/Dyn_fsync_active ]; then
@@ -2078,9 +2188,9 @@ fi;
 
 echo "" | tee -a $LOG;
 echo "* END : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
-echo "* ========================================================== *" | tee -a $LOG
+echo "================================================" | tee -a $LOG;
 echo "* ϟ NFS-INJECTOR(TM) ϟ *" | tee -a $LOG
 echo "* Copyright(C) K1KS & Team 2019 *" | tee -a $LOG
 echo "* Group t.me/nfsinjector *" | tee -a $LOG
-echo "==========================================================" | tee -a $LOG;
+echo "================================================" | tee -a $LOG;
 exit 0
