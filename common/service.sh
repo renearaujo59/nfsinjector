@@ -3,7 +3,7 @@
 # Codename : HUNTER
 # Version : 5.0
 # Developer : @K1ks
-Date=23-03-2019
+Date=29-03-2019
 # Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
 #========================================
 ## MODE USER ( mode.txt )
@@ -36,7 +36,7 @@ fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
 LOGMOUNT=/$NFS/nfsmount.log
-V=5.0
+V=5.1
 S=Stable
 Code=Hunter
 box=`busybox | awk 'NR==1{print $2}'` 2>/dev/null
