@@ -36,7 +36,7 @@ fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
 LOGMOUNT=/$NFS/nfsmount.log
-V=5.1
+V=5.2
 S=Stable
 Code=Hunter
 box=`busybox | awk 'NR==1{print $2}'` 2>/dev/null
