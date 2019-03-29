@@ -593,7 +593,7 @@ unity_install() {
     # Auto mount
     if [ -d $MODPATH/system ] && ! $SYSOVER; then
       if imageless_magisk; then
-        $SKIPMOUNT && touch $MODPATH/skip_mount
+        if $SKIPMOUNT || [ ! -d $MODPATH/system ]; then touch $MODPATH/skip_mount; fi
       else
         $SKIPMOUNT || touch $MODPATH/auto_mount
       fi
@@ -675,6 +675,7 @@ comp_check() {
     MAGISK=false
   else
     MAGISK=true
+    [ $MAGISK_VER_CODE -lt 18000 ] && require_new_magisk
     $SYSOVER && $BOOTMODE && { ui_print "   ! Magisk manager isn't supported!"; abort "   ! Install in recovery !"; }
   fi
 }
