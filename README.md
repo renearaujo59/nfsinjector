@@ -182,3 +182,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V5.1
 - Update To Unity 4.0
+
+### V5.2
+- Fix Unity 4.0
