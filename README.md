@@ -28,7 +28,7 @@ This Module is Universal , It works on all OS with all kernels ( HMP / EAS ).
 [XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
 # Requirements
-- Magisk v18.1+ (if not, it should install directly to system)
+- Magisk v17+ (if not, it should install directly to system)
 - [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
 # Supporter Suggestions
@@ -180,8 +180,15 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Update Compression Modules 
 - Thanks To @zackptg5 For fix Unity 3.3
 
-### V5.1
-- Update To Unity 4.0
-
-### V5.2
-- Fix Unity 4.0
+### V5.5
+- Add CodeName : Crisis
+- Update Cpu Interactive
+- Update Kernel Tasks 
+- Improved Security ( WARNING )
+- Add Net Values
+- Add More Dns Custom ( Verisign , CleanBrowsing : Testing ...) 
+- Add Dalvik Tuner
+- Add Magisk Version Detection
+- Update Mfk/Emfk calculation .
+- Update Sync module 
+- Update / Fix To Unity 4.0
