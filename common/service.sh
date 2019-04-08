@@ -3,7 +3,7 @@
 # Codename : HUNTER
 # Version : 5.0
 # Developer : @K1ks
-Date=29-03-2019
+Date=08-04-2019
 # Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
 #========================================
 ## MODE USER ( mode.txt )
@@ -19,26 +19,28 @@ Date=29-03-2019
 # 0 = OFF ( Def )
 # 1 = DNS GUARD ( ADS )
 # 2 = DNS CLOUDFLARE ( SPEED )
-# 3 = DNS PUBLIC GOOGLE ( GENERAL+GAME )
+# 3 = DNS GOOGLE
+# 4 = DNS CLEANBROWSING
+# 5 = DNS VERISIGN
 ## SELIUX USER ( linux.txt )
 # 0 = PERMISSIVE ( Def )
 # 1 = ENFORCING
 # SUPPORT GOVERNORS = pixel_schedutil helix_schedutil smurfutil_flex pixutil pwrutilx darkness schedutil blu_schedutil blu_active elementalx zzmoove interactivepro interactiveplus interactiveX interactive ondemand performance
 # SUPPORT SCHEDULER = anxiety fiops sioplus sio zen tripndroid row bfq cfq deadline noop
-# SUPPORT TCP = sociopath westwood cubic reno
+# SUPPORT TCP = ascarex sociopath westwood cubic reno
 
 # PATH LOG =========================================#
 
 Path=/data
-if [ ! -d $Path/NFS ]; then 
+if [ ! -d $Path/NFS ]; then
  mkdir -p $Path/NFS
 fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
 LOGMOUNT=/$NFS/nfsmount.log
-V=5.2
+V=5.5
 S=Stable
-Code=Hunter
+Code=Crisis
 box=`busybox | awk 'NR==1{print $2}'` 2>/dev/null
 MEM=`free -m | awk '/Mem:/{print $2}'`
 mem=`free | grep Mem |  awk '{print $2}'`;
@@ -47,6 +49,7 @@ ROM=$(getprop ro.build.display.id) 2>/dev/null
 KERNEL=$(uname -r) 2>/dev/null
 APP=$(getprop ro.product.model) 2>/dev/null
 SDK=$(getprop ro.build.version.sdk) 2>/dev/null 
+ROOT=$(magisk -c) 2>/dev/null
 MODE=`cat $NFS/mode.txt`;
 DNS=`cat $NFS/dns.txt`;
 SE=`cat $NFS/linux.txt`;
@@ -67,10 +70,17 @@ else
  SOC=Unidentified_Soc
 fi;
 
+if [ -d /sbin/.core/img ]; then
+SBIN=/sbin/.core/img
+elif [ -d /sbin/.magisk/img ]; then
+SBIN=/sbin/.magisk/img
+fi;
+
 INVADER() {
 echo "*...WARNING , BE CAREFUL...*" | tee -a $LOG;
 echo "*...NFS AUTO-EXIT , ABORTING...*" | tee -a $LOG;
-echo "*...SIMILAR MODULE FOUND...*" | tee -a $LOG;
+echo "*... $IT FOUND...*" | tee -a $LOG;
+echo "*...CHECK BEFORE NEXT REBOOT...*" | tee -a $LOG;
 exit 1
 }
 
@@ -151,7 +161,9 @@ elif grep 'deadline' $SA; then
 elif grep 'noop' $SA; then
  sch=noop
 fi;
-if  grep -l 'sociopath' $TACC; then
+if  grep -l 'ascarex' $TACC; then
+ tcp=ascarex
+elif  grep -l 'sociopath' $TACC; then
  tcp=sociopath
 elif  grep -l 'westwood' $TACC; then
  tcp=westwood
@@ -170,7 +182,7 @@ fi;
 
 while ! pgrep com.android ; 
 do
- sleep 50
+ sleep 66
 done
 
 if [ -e $LOG ]; then
@@ -179,10 +191,45 @@ fi;
 
 # CHECK INVADER =========================================#
 
-if [ -e /sbin/.core/img/legendary_kernel_tweaks ]; then
+if [ -e $SBIN/legendary_kernel_tweaks ]; then
  INVADER
+ IT=LTK
 elif [ -e /data/LKT.prop ]; then
  INVADER
+ IT=LTK
+elif [ -e $SBIN/FDE ]; then
+ INVADER
+ IT=FDE.AI
+elif [ -e $SYS/bin/L_Speed ]; then
+ INVADER
+ IT=LSpeed
+elif [ -e $SYS/xbin/killjoy ]; then
+ INVADER
+ IT=KillJoy
+elif [ -e $SYS/xbin/haveged ]; then
+ INVADER
+ IT=Haveged
+elif [ -e $SYS/bin/The_Thing ]; then
+ INVADER
+ IT=The_Thing
+elif [ -e $SYS/KITANA/COMMON/KI00Rngd ]; then
+ INVADER
+ IT=Kitana
+elif [ -e $SYS/xbin/fde ]; then
+ INVADER
+ IT=FDE
+elif [ -e $SYS/bin/ABS ]; then
+ INVADER
+ IT=ABS
+elif [ -e $SYS/etc/CrossBreeder/CrossBreeder ]; then
+ INVADER
+ IT=CrossBeeder
+elif [ -e $SYS/etc/init.d/999fde ]; then
+ INVADER
+ IT=FDE
+elif [ -e /data/data/com.paget96.lspeed/files/binaries/busybox ]; then
+ INVADER
+ IT=LSpeedApp
 fi;
 
 # CONFIGURATION =========================================#
@@ -208,6 +255,9 @@ fi;
 if [ ! -e $NFS/comp.txt ]; then
  echo "0" > $NFS/comp.txt
 fi;
+if [ ! -e $NFS/sync.txt ]; then
+ echo "0" > $NFS/sync.txt
+fi;
 if [ "$MEM" -lt 2560 ]; then
  RAMCAP=0
 else
@@ -229,6 +279,7 @@ echo "** Vendor : $VENDOR *" | tee -a $LOG;
 echo "** Device : $APP *" | tee -a $LOG;
 echo "** Soc : $SOC *" | tee -a $LOG;
 echo "** Rom : $ROM *" | tee -a $LOG;
+echo "** Root : $ROOT *" | tee -a $LOG;
 echo "** Android : $(getprop ro.build.version.release) *" | tee -a $LOG;
 echo "** Sdk : $SDK *" | tee -a $LOG;
 echo "** Kernel : $KERNEL *" | tee -a $LOG;
@@ -289,6 +340,19 @@ elif [ -e /sys/module/mmc_core/parameters/use_spi_crc ]; then
  MMC
 fi;
 
+# SYSCTL / DVFS =========================================#
+
+if [ -e $SYS/etc/sysctl.conf ]; then
+ mv -f $SYS/etc/sysctl.conf $SYS/etc/sysctl.conf.bak
+echo "* Tuner System  = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/devices/14ac0000.mali/dvfs ]; then
+ chmod 0000 /sys/devices/14ac0000.mali/dvfs
+ chmod 0000 /sys/devices/14ac0000.mali/dvfs_max_lock
+ chmod 0000 /sys/devices/14ac0000.mali/dvfs_min_lock
+ echo "* Dyn Voltage / Freqs Scaling  = Disabled *" |  tee -a $LOG;
+fi;
+
 # VM TWEAKS =========================================#
 
 sync;
@@ -298,37 +362,35 @@ if [ "$MODE" -eq "2" ]; then
  sysctl -e -w vm.dirty_background_ratio=3 2>/dev/null
  sysctl -e -w vm.dirty_ratio=15 2>/dev/null
  sysctl -e -w vm.vfs_cache_pressure=150 2>/dev/null
- sysctl -e -w vm.laptop_mode=0 2>/dev/null
 elif [ "$MODE" -eq "1" ]; then
  sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
  sysctl -e -w vm.dirty_ratio=70 2>/dev/null
  sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=1 2>/dev/null
 elif [ "$MODE" -eq "3" ]; then
  sysctl -e -w vm.dirty_background_ratio=5 2>/dev/null
  sysctl -e -w vm.dirty_ratio=20 2>/dev/null
  sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=1 2>/dev/null
 else
  sysctl -e -w vm.dirty_background_ratio=35 2>/dev/null
  sysctl -e -w vm.dirty_ratio=70 2>/dev/null
  sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.laptop_mode=1 2>/dev/null
 fi;
+sysctl -e -w vm.drop_caches=0 2>/dev/null
 sysctl -e -w vm.oom_kill_allocating_task=0 2>/dev/null
 sysctl -e -w vm.block_dump=0 2>/dev/null
 sysctl -e -w vm.overcommit_memory=1 2>/dev/null
 sysctl -e -w vm.oom_dump_tasks=1 2>/dev/null
 sysctl -e -w vm.dirty_writeback_centisecs=0 2>/dev/null
 sysctl -e -w vm.dirty_expire_centisecs=0 2>/dev/null
-sysctl -e -w fs.lease-break-time=5 2>/dev/null
+sysctl -e -w vm.min_free_order_shift=4 2>/dev/null
+sysctl -e -w vm.swappiness=0 2>/dev/null
+sysctl -e -w vm.page-cluster=0 2>/dev/null
+sysctl -e -w vm.laptop_mode=0 2>/dev/null
+sysctl -e -w fs.lease-break-time=10 2>/dev/null
 sysctl -e -w fs.leases-enable=1 2>/dev/null
 sysctl -e -w fs.dir-notify-enable=0 2>/dev/null
 sysctl -e -w vm.compact_memory=1 2>/dev/null
 sysctl -e -w vm.compact_unevictable_allowed=1 2>/dev/null
-sysctl -e -w vm.swappiness=0 2>/dev/null
-sysctl -e -w vm.page-cluster=0 2>/dev/null
-sysctl -e -w vm.laptop_mode=0 2>/dev/null
 echo "* VM Kernel = Activated *" |  tee -a $LOG;
 
 # KILL DEBUGGING =========================================#
@@ -345,19 +407,19 @@ if [ "$MODE" -eq "2" ]; then
  VP=$((($MEM*4/100)*1024/4));
  SR=$((($MEM*5/100)*1024/4));
  HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*21/100)*1024/4));  
+ CR=$((($MEM*9/100)*1024/4));
+ EP=$((($MEM*15/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
- MFK=$(($MEM*7))
+ MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "1" ]; then
  FP=$((($MEM*3/100)*1024/4));
  VP=$((($MEM*4/100)*1024/4));
  SR=$((($MEM*5/100)*1024/4));
  HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*21/100)*1024/4)); 
+ CR=$((($MEM*9/100)*1024/4));
+ EP=$((($MEM*15/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
- MFK=$(($MEM*7))
+ MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "3" ]; then
  FP=$((($MEM*3/100)*1024/4));
  VP=$((($MEM*4/100)*1024/4));
@@ -366,7 +428,7 @@ elif [ "$MODE" -eq "3" ]; then
  CR=$((($MEM*10/100)*1024/4));
  EP=$((($MEM*13/100)*1024/4));
  ADJ1=0; ADJ2=100; ADJ3=200; ADJ4=300; ADJ5=900; ADJ6=906 # STOCK
- MFK=$(($MEM*3))
+ MFK=$(($FP*4/5))
 else
  FP=$((($MEM*3/100)*1024/4));
  VP=$((($MEM*4/100)*1024/4));
@@ -375,7 +437,7 @@ else
  CR=$((($MEM*10/100)*1024/4));
  EP=$((($MEM*13/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
- MFK=$(($MEM*5))
+ MFK=$(($VP*4/5))
 fi;
 
 if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
@@ -388,7 +450,7 @@ if [ -e /sys/module/lowmemorykiller/parameters/debug_level ]; then
  echo "0" > /sys/module/lowmemorykiller/parameters/debug_level;
 fi;
 if [ -e  /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
- chmod 0666  /sys/module/lowmemorykiller/parameters/oom_reaper;
+ chmod 0666 /sys/module/lowmemorykiller/parameters/oom_reaper;
  echo "1" >  /sys/module/lowmemorykiller/parameters/oom_reaper
 fi;
 
@@ -397,7 +459,7 @@ chmod 0666 /sys/module/lowmemorykiller/parameters/minfree;
 echo "$ADJ1,$ADJ2,$ADJ3,$ADJ4,$ADJ5,$ADJ6" > /sys/module/lowmemorykiller/parameters/adj;
 echo "$FP,$VP,$SR,$HP,$CR,$EP" > /sys/module/lowmemorykiller/parameters/minfree;
 
-MFK1=$(($MFK/2))
+MFK1=$(($MFK/3))
 sysctl -e -w vm.min_free_kbytes=$MFK;
 
 if [ -e /proc/sys/vm/extra_free_kbytes ]; then
@@ -529,12 +591,12 @@ elif [ "$MODE" -eq "3" ]; then
 else
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/input_boost_duration
-  echo "50" > /sys/module/cpu_input_boost/parameters/input_boost_duration
+  echo "60" > /sys/module/cpu_input_boost/parameters/input_boost_duration
   echo "* CPU Boost Input Duration = Enabled *" | tee  -a $LOG
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms
-  echo "50" > /sys/module/cpu_boost/parameters/input_boost_ms
+  echo "60" > /sys/module/cpu_boost/parameters/input_boost_ms
   echo "* CPU Boost Input Ms = Enabled *" | tee  -a $LOG
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms_s2 ]; then
@@ -652,6 +714,7 @@ if [ -d $CPU/cpu9 ]; then
  done;
 
  CORES=Deca-Core
+ core=10
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
  MB=/sys/devices/system/cpu/cpu5/cpufreq/$GOV
  if [ -e /sys/devices/system/cpu/cpufreq/$GOV ]; then
@@ -668,6 +731,7 @@ elif [ -d $CPU/cpu7 ]; then
  done;
  
  CORES=Octa-Core
+ core=8
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
  MB=/sys/devices/system/cpu/cpu4/cpufreq/$GOV
  if [ -e /sys/devices/system/cpu/cpufreq/$GOV ]; then
@@ -684,6 +748,7 @@ elif [ -d $CPU/cpu5 ]; then
  done;
  
  CORES=Hexa-Core
+ core=6
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
  MB=/sys/devices/system/cpu/cpu3/cpufreq/$GOV
  if [ -e /sys/devices/system/cpu/cpufreq/$GOV ]; then
@@ -700,6 +765,7 @@ elif [ -d $CPU/cpu3 ]; then
  done;
  
  CORES=Quad-Core
+ core=4
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
  MB=/sys/devices/system/cpu/cpu2/cpufreq/$GOV
  if [ -e /sys/devices/system/cpu/cpufreq/$GOV ]; then
@@ -716,6 +782,7 @@ elif [ -d $CPU/cpu1 ]; then
  done;
  
  CORES=Dual-Core
+ core=2
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
  MB=/sys/devices/system/cpu/cpu1/cpufreq/$GOV
  if [ -e /sys/devices/system/cpu/cpufreq/$GOV ]; then
@@ -784,8 +851,8 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -799,8 +866,8 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -815,8 +882,8 @@ elif [ "$GOV" == "darkness" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -830,8 +897,8 @@ elif [ "$GOV" == "darkness" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -886,8 +953,8 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -901,13 +968,13 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
  TUNE=Tuned
- elif [ "$GOV" == "interactive_pro" ]; then
+elif [ "$GOV" == "interactive_pro" ]; then
  echo "0" > $ML/boost 2>/dev/null
  echo "0" > $ML/boostpulse 2>/dev/null
  echo "0" > $ML/boostpulse_duration 2>/dev/null
@@ -917,8 +984,8 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -932,8 +999,8 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -948,8 +1015,8 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -963,8 +1030,8 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -979,8 +1046,8 @@ elif [ "$GOV" == "interactive" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -994,8 +1061,8 @@ elif [ "$GOV" == "interactive" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1010,8 +1077,8 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "99" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
  echo "19000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
@@ -1025,8 +1092,8 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "99" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1148,10 +1215,10 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1163,7 +1230,7 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1179,10 +1246,10 @@ elif [ "$GOV" == "darkness" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1194,7 +1261,7 @@ elif [ "$GOV" == "darkness" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1250,10 +1317,10 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1265,12 +1332,12 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
  TUNE=Tuned
- elif [ "$GOV" == "interactive_pro" ]; then
+elif [ "$GOV" == "interactive_pro" ]; then
  echo "0" > $ML/boost 2>/dev/null
  echo "0" > $ML/boostpulse 2>/dev/null
  echo "0" > $ML/boostpulse_duration 2>/dev/null
@@ -1281,10 +1348,10 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1296,7 +1363,7 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1312,10 +1379,10 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1327,7 +1394,7 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1343,10 +1410,10 @@ elif [ "$GOV" == "interactive" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1358,7 +1425,7 @@ elif [ "$GOV" == "interactive" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1374,10 +1441,10 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
- echo "80000" > $ML/timer_slack 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1389,7 +1456,7 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
  echo "90" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1474,10 +1541,10 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1489,8 +1556,8 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1505,10 +1572,10 @@ elif [ "$GOV" == "darkness" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1520,8 +1587,8 @@ elif [ "$GOV" == "darkness" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1576,10 +1643,10 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1591,13 +1658,13 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
  TUNE=Tuned
- elif [ "$GOV" == "interactive_pro" ]; then
+elif [ "$GOV" == "interactive_pro" ]; then
  echo "0" > $ML/boost 2>/dev/null
  echo "0" > $ML/boostpulse 2>/dev/null
  echo "0" > $ML/boostpulse_duration 2>/dev/null
@@ -1607,10 +1674,10 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1622,8 +1689,8 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1638,10 +1705,10 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1653,8 +1720,8 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1669,10 +1736,10 @@ elif [ "$GOV" == "interactive" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1684,8 +1751,8 @@ elif [ "$GOV" == "interactive" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1700,10 +1767,10 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "1" > $ML/use_sched_load 2>/dev/null
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
- echo "85" > $ML/go_hispeed_load 2>/dev/null
- echo "30000" > $ML/timer_rate 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
  echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
@@ -1715,8 +1782,371 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "1" > $MB/use_sched_load 2>/dev/null
  echo "0" > $MB/enable_prediction 2>/dev/null
  echo "1" > $MB/fast_ramp_down 2>/dev/null
- echo "85" > $MB/go_hispeed_load 2>/dev/null
- echo "30000" > $MB/timer_rate 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "ondemand" ]; then
+ echo "90" > $MB/up_threshold 2>/dev/null
+ echo "85" > $MB/up_threshold_any_cpu_load 2>/dev/null
+ echo "85" > $MB/up_threshold_multi_core 2>/dev/null
+ echo "75000" > $MB/sampling_rate 2>/dev/null
+ echo "2" > $MB/sampling_down_factor 2>/dev/null
+ echo "10" > $MB/down_differential 2>/dev/null
+ echo "35" > $MB/freq_step 2>/dev/null
+ echo "90" > $ML/up_threshold 2>/dev/null
+ echo "85" > $ML/up_threshold_any_cpu_load 2>/dev/null
+ echo "85" > $ML/up_threshold_multi_core 2>/dev/null
+ echo "75000" > $ML/sampling_rate 2>/dev/null
+ echo "2" > $ML/sampling_down_factor 2>/dev/null
+ echo "10" > $ML/down_differential 2>/dev/null
+ echo "35" > $ML/freq_step 2>/dev/null
+ TUNE=Tuned
+else
+TUNE=Not_Tuned
+fi;
+
+chmod 0444 $ML
+chmod 0444 $MB
+echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
+}
+
+CPUGAME() {
+if [ "$GOV" == "smurfutil_flex" ]; then
+ echo "1" > $ML/pl 2>/dev/null
+ echo "6" > $ML/bit_shift1 2>/dev/null
+ echo "5" > $ML/bit_shift1_2 2>/dev/null
+ echo "6" > $ML/bit_shift2 2>/dev/null
+ echo "40" > $ML/target_load1 2>/dev/null
+ echo "75" > $ML/target_load2 2>/dev/null
+ echo "1" > $MB/pl 2>/dev/null
+ echo "6" > $MB/bit_shift1 2>/dev/null
+ echo "5" > $MB/bit_shift1_2 2>/dev/null
+ echo "6" > $MB/bit_shift2 2>/dev/null
+ echo "40" > $MB/target_load1 2>/dev/null
+ echo "75" > $MB/target_load2 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "pixutil" ]; then
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $MB/iowait_boost_enable 2>/dev/null
+ echo "0" > $MB/pl 2>/dev/null
+ echo "0" > $MB/hispeed_freq 2>/dev/null
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "8000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $ML/iowait_boost_enable 2>/dev/null
+ echo "0" > $ML/pl 2>/dev/null
+ echo "0" > $ML/hispeed_freq 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "pwrutilx" ]; then
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $MB/iowait_boost_enable 2>/dev/null
+ echo "0" > $MB/pl 2>/dev/null
+ echo "0" > $MB/hispeed_freq 2>/dev/null
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "8000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $ML/iowait_boost_enable 2>/dev/null
+ echo "0" > $ML/pl 2>/dev/null
+ echo "0" > $ML/hispeed_freq 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "pixel_schedutil" ]; then
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $MB/iowait_boost_enable 2>/dev/null
+ echo "0" > $MB/pl 2>/dev/null
+ echo "0" > $MB/hispeed_freq 2>/dev/null
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "8000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $ML/iowait_boost_enable 2>/dev/null
+ echo "0" > $ML/pl 2>/dev/null
+ echo "0" > $ML/hispeed_freq 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "helix_schedutil" ]; then
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $MB/iowait_boost_enable 2>/dev/null
+ echo "0" > $MB/pl 2>/dev/null
+ echo "0" > $MB/hispeed_freq 2>/dev/null
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "8000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $ML/iowait_boost_enable 2>/dev/null
+ echo "0" > $ML/pl 2>/dev/null
+ echo "0" > $ML/hispeed_freq 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "schedutil" ]; then
+ echo "1500" > $MB/up_rate_limit_us 2>/dev/null
+ echo "3000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "1500" > $ML/up_rate_limit_us 2>/dev/null
+ echo "3000" > $ML/down_rate_limit_us 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "blu_schedutil" ]; then
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $MB/iowait_boost_enable 2>/dev/null
+ echo "0" > $MB/pl 2>/dev/null
+ echo "0" > $MB/hispeed_freq 2>/dev/null
+ echo "1000" > $MB/up_rate_limit_us 2>/dev/null
+ echo "2000" > $MB/down_rate_limit_us 2>/dev/null
+ echo "0" > $ML/iowait_boost_enable 2>/dev/null
+ echo "0" > $ML/pl 2>/dev/null
+ echo "0" > $ML/hispeed_freq 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "blu_active" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "darkness" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "elementalx" ]; then
+ echo "5" > $MB/down_differential 2>/dev/null
+ echo "0" > $MB/gboost 2>/dev/null
+ echo "0" > $MB/input_event_timeout 2>/dev/null
+ echo "40000" > $MB/sampling_rate 2>/dev/null
+ echo "30000" > $MB/ui_sampling_rate 2>/dev/null
+ echo "99" > $MB/up_threshold 2>/dev/null
+ echo "99" > $MB/up_threshold_any_cpu_load 2>/dev/null
+ echo "99" > $MB/up_threshold_multi_core 2>/dev/null
+ echo "5" > $ML/down_differential 2>/dev/null
+ echo "0" > $ML/gboost 2>/dev/null
+ echo "0" > $ML/input_event_timeout 2>/dev/null
+ echo "40000" > $ML/sampling_rate 2>/dev/null
+ echo "30000" > $ML/ui_sampling_rate 2>/dev/null
+ echo "99" > $ML/up_threshold 2>/dev/null
+ echo "99" > $ML/up_threshold_any_cpu_load 2>/dev/null
+ echo "99" > $ML/up_threshold_multi_core 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "zzmoove" ]; then
+ echo "85" > $MB/up_threshold 2>/dev/null
+ echo "75" > $MB/smooth_up 2>/dev/null
+ echo "0" > $MB/scaling_proportional 2>/dev/null
+ echo "70000" $MB/sampling_rate_min 2>/dev/null
+ echo "70000" $MB/sampling_rate 2>/dev/null
+ echo "1" > $MB/sampling_down_factor 2>/dev/null
+ echo "0" > $MB/ignore_nice_load 2>/dev/null
+ echo "0" > $MB/fast_scaling_up 2>/dev/null
+ echo "0" > $MB/fast_scaling_down 2>/dev/null
+ echo "50" > $MB/down_threshold 2>/dev/null
+ echo "85" > $ML/up_threshold 2>/dev/null
+ echo "75" > $ML/smooth_up 2>/dev/null
+ echo "0" > $ML/scaling_proportional 2>/dev/null
+ echo "70000" $ML/sampling_rate_min 2>/dev/null
+ echo "70000" $ML/sampling_rate 2>/dev/null
+ echo "1" > $ML/sampling_down_factor 2>/dev/null
+ echo "0" > $ML/ignore_nice_load 2>/dev/null
+ echo "0" > $ML/fast_scaling_up 2>/dev/null
+ echo "0" > $ML/fast_scaling_down 2>/dev/null
+ echo "50" > $ML/down_threshold 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "interactiveplus" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "interactive_pro" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "interactivepro" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "interactive" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "interactivex" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "50000" > $ML/min_sample_time 2>/dev/null
+ echo "40000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
  echo "0" > $MB/io_is_busy 2>/dev/null
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
@@ -1747,13 +2177,64 @@ echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
 }
 
 if [ "$MODE" -eq "2" ]; then
- CPUULTRA
+ CPUGAME
 elif [ "$MODE" -eq "1" ]; then
  CPUULTRA
 elif [ "$MODE" -eq "3" ]; then
  CPUBATTERY
 else
  CPUBALANCE
+fi;
+
+# DALVIK TUNER =========================================#
+
+current1=$(getprop dalvik.vm.dex2oat-threads)
+current2=$(getprop dalvik.vm.boot-dex2oat-threads)
+current3=$(getprop persist.dalvik.vm.dex2oat-threads)
+
+if [ ! "$current1" = "" ]; then
+ if [ $core -eq 10 ]; then
+  setprop dalvik.vm.dex2oat-threads 8
+ elif [ $core -eq 8 ]; then
+  setprop dalvik.vm.dex2oat-threads 6
+ elif [ $core -eq 6 ]; then
+  setprop dalvik.vm.dex2oat-threads 4
+ elif [ $core -eq 4 ]; then
+  setprop dalvik.vm.dex2oat-threads 2
+ elif [ $core -eq 2 ]; then
+  setprop dalvik.vm.dex2oat-threads 1
+ fi;
+ echo "* Dalvik Tuner Dex2oat = Activated *" |  tee -a $LOG;
+fi;
+
+if [ ! "$current2" = "" ]; then
+ if [ $core -eq 10 ]; then
+  setprop dalvik.vm.boot-dex2oat-threads 8
+ elif [ $core -eq 8 ]; then
+  setprop dalvik.vm.boot-dex2oat-threads 6
+ elif [ $core -eq 6 ]; then
+  setprop dalvik.vm.boot-dex2oat-threads 4
+ elif [ $core -eq 4 ]; then
+  setprop dalvik.vm.boot-dex2oat-threads 2
+ elif [ $core -eq 2 ]; then
+  setprop dalvik.vm.boot-dex2oat-threads 1
+ fi;
+ echo "* Dalvik Tuner Dex2oat Boot = Activated *" |  tee -a $LOG;
+fi;
+
+if [ ! "$current3" = "" ]; then
+ if [ $core -eq 10 ]; then
+  setprop persist.dalvik.vm.dex2oat-threads 8
+ elif [ $core -eq 8 ]; then
+  setprop persist.dalvik.vm.dex2oat-threads 6
+ elif [ $core -eq 6 ]; then
+  setprop persist.dalvik.vm.dex2oat-threads 4
+ elif [ $core -eq 4 ]; then
+  setprop persist.dalvik.vm.dex2oat-threads 2
+ elif [ $core -eq 2 ]; then
+  setprop persist.dalvik.vm.dex2oat-threads 1
+ fi;
+ echo "* Dalvik Tuner Pers Dex2oat = Activated *" |  tee -a $LOG;
 fi;
 
 # ZRAM ZSWAP CONFIGURATION =========================================#
@@ -1901,6 +2382,7 @@ fi;
  
 if [ -e /sys/kernel/debug/sched_features ]; then
  echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
+ echo "ARCH_POWER" > /sys/kernel/debug/sched_features
  echo "* Kernel Task Scheduler = Disabled *" |  tee -a $LOG;
 fi;
 
@@ -1908,11 +2390,16 @@ fi;
 
 CC=$(cat $NFS/tcp.txt);
 echo "$CC" > /proc/sys/net/ipv4/tcp_congestion_control 
+sysctl -e -w net.ipv4.tcp_timestamps=0
+sysctl -e -w net.ipv4.tcp_sack=1
+sysctl -e -w net.ipv4.tcp_fack=1
+sysctl -e -w net.ipv4.tcp_window_scaling=1
 echo "* Network TCP $CC = Activated *" |  tee -a $LOG;
 
 # GUARD / CLOUDFLARE / GOOGLE =========================================#
 
 if [ $DNS -eq "1" ]; then
+ # GUARD
  # IPTABLE 
  iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to 176.103.130.130:5353
  iptables -t nat -I OUTPUT -p tcp --dport 53 -j DNAT --to 176.103.130.130:5353
@@ -1943,6 +2430,7 @@ if [ $DNS -eq "1" ]; then
  setprop 2a00:5a60::ad2:0ff:5353
  echo "* Guard DNS = Enabled *" | tee -a $LOG;
 elif [ $DNS -eq "2" ]; then
+ # CLOUDFLARE
  # IPTABLE 
  iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 1.0.0.1:53
  iptables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to 1.0.0.1:53
@@ -1973,6 +2461,7 @@ elif [ $DNS -eq "2" ]; then
  setprop 2606:4700:4700::1001
  echo "* CloudFlare DNS = Enabled *" | tee -a $LOG;
 elif [ $DNS -eq "3" ]; then
+ # GOOGLE
  # IPTABLE 
  iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 8.8.8.8:53
  iptables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to 8.8.4.4:53
@@ -2002,6 +2491,68 @@ elif [ $DNS -eq "3" ]; then
  setprop 2001:4860:4860::8888
  setprop 2001:4860:4860::8844
  echo "* Google Public DNS = Enabled *" | tee -a $LOG; 
+elif [ $DNS -eq "5" ]; then
+ # VERISIGN
+ # IPTABLE 
+ iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to 64.6.64.6:5353
+ iptables -t nat -I OUTPUT -p tcp --dport 53 -j DNAT --to 64.6.64.6:5353
+ iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 64.6.65.6:5353
+ iptables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to 64.6.65.6:5353
+ ip6tables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to [2620:74:1b::1:1]:5353
+ ip6tables -t nat -I OUTPUT -p tcp --dport 53 -j DNAT --to [2620:74:1b::1:1]:5353
+ ip6tables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to [2620:74:1c::2:2.]:5353
+ ip6tables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to [2620:74:1c::2:2.]:5353
+ # SETPROP 
+ setprop net.eth0.dns1 64.6.64.6
+ setprop net.eth0.dns2 64.6.65.6
+ setprop net.dns1 64.6.64.6
+ setprop net.dns2 64.6.65.6
+ setprop net.ppp0.dns1 64.6.64.6
+ setprop net.ppp0.dns2 64.6.65.6
+ setprop net.rmnet0.dns1 64.6.64.6
+ setprop net.rmnet0.dns2 64.6.65.6
+ setprop net.rmnet1.dns1 64.6.64.6
+ setprop net.rmnet1.dns2 64.6.65.6
+ setprop net.rmnet2.dns1 64.6.64.6
+ setprop net.rmnet2.dns2 64.6.65.6
+ setprop net.pdpbr1.dns1 64.6.64.6
+ setprop net.pdpbr1.dns2 64.6.65.6
+ setprop net.wlan0.dns1 64.6.64.6
+ setprop net.wlan0.dns2 64.6.65.6
+ setprop 2620:74:1b::1:1:5353
+ setprop 2620:74:1c::2:2.:5353
+ echo "* Verisign DNS = Enabled *" | tee -a $LOG;
+elif [ $DNS -eq "4" ]; then
+ # CLEANBROWSING
+ # IPTABLE 
+ iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to 185.228.168.9:5353
+ iptables -t nat -I OUTPUT -p tcp --dport 53 -j DNAT --to 185.228.168.9:5353
+ iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 185.228.169.9:5353
+ iptables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to 185.228.169.9:5353
+ ip6tables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to [2a0d:2a00:1::2]:5353
+ ip6tables -t nat -I OUTPUT -p tcp --dport 53 -j DNAT --to [2a0d:2a00:1::2]:5353
+ ip6tables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to [2a0d:2a00:2::2]:5353
+ ip6tables -t nat -I OUTPUT -p udp --dport 53 -j DNAT --to [2a0d:2a00:2::2]:5353
+ # SETPROP 
+ setprop net.eth0.dns1 185.228.168.9
+ setprop net.eth0.dns2 185.228.169.9
+ setprop net.dns1 185.228.168.9
+ setprop net.dns2 185.228.169.9
+ setprop net.ppp0.dns1 185.228.168.9
+ setprop net.ppp0.dns2 185.228.169.9
+ setprop net.rmnet0.dns1 185.228.168.9
+ setprop net.rmnet0.dns2 185.228.169.9
+ setprop net.rmnet1.dns1 185.228.168.9
+ setprop net.rmnet1.dns2 185.228.169.9
+ setprop net.rmnet2.dns1 185.228.168.9
+ setprop net.rmnet2.dns2 185.228.169.9
+ setprop net.pdpbr1.dns1 185.228.168.9
+ setprop net.pdpbr1.dns2 185.228.169.9
+ setprop net.wlan0.dns1 185.228.168.9
+ setprop net.wlan0.dns2 185.228.169.9
+ setprop 2a0d:2a00:1::2:5353
+ setprop 2a0d:2a00:2::2:5353
+ echo "* CleanBrowsing DNS = Enabled *" | tee -a $LOG;
 fi;	
 
 # FIX GP SERVICES =========================================#
@@ -2159,23 +2710,42 @@ if [ `cat /sys/kernel/fast_charge/screen_on_current_limit` -eq "0" ]; then
  echo "* Screen On Current Limit = Exceeded *" |  tee -a $LOG
 fi;
 
-# FSYNC OFF =========================================#
+# FSYNC ON/OFF =========================================#
 
-if [ -e /sys/kernel/dyn_fsync/Dyn_fsync_active ]; then
- echo "0" > /sys/kernel/dyn_fsync/Dyn_fsync_active
- echo "* Dyn Fsync Active = Disabled *" | tee  -a $LOG
-fi;
-if [ -e /sys/class/misc/fsynccontrol/fsync_enabled ]; then
- echo "0" > /sys/class/misc/fsynccontrol/fsync_enabled
- echo "* Fsync Control = Disabled *" | tee  -a $LOG
-fi; 
-if [ -e /sys/module/sync/parameters/fsync ]; then
- echo "0" > /sys/module/sync/parameters/fsync
- echo "* Fsync = Disabled *" | tee  -a $LOG
-fi;
-if [ -e /sys/module/sync/parameters/fsync_enabled ]; then
- echo "N" > /sys/module/sync/parameters/fsync_enabled
- echo "* Fsync = Disabled *" | tee  -a $LOG
+if [ "$SY" -eq "1" ]; then
+ if [ -e /sys/kernel/dyn_fsync/Dyn_fsync_active ]; then
+  echo "1" > /sys/kernel/dyn_fsync/Dyn_fsync_active
+  echo "* Dyn Fsync Active = Enabled *" | tee  -a $LOG
+ fi;
+ if [ -e /sys/class/misc/fsynccontrol/fsync_enabled ]; then
+  echo "1" > /sys/class/misc/fsynccontrol/fsync_enabled
+  echo "* Fsync Control = Enabled *" | tee  -a $LOG
+ fi; 
+ if [ -e /sys/module/sync/parameters/fsync ]; then
+  echo "1" > /sys/module/sync/parameters/fsync
+  echo "* Fsync = Enabled *" | tee  -a $LOG
+ fi;
+ if  [ -e /sys/module/sync/parameters/fsync_enabled ]; then
+  echo "Y" > /sys/module/sync/parameters/fsync_enabled
+  echo "* Fsync = Enabled *" | tee  -a $LOG
+ fi;
+else
+ if [ -e /sys/kernel/dyn_fsync/Dyn_fsync_active ]; then
+  echo "0" > /sys/kernel/dyn_fsync/Dyn_fsync_active
+  echo "* Dyn Fsync Active = Disabled *" | tee  -a $LOG
+ fi;
+ if [ -e /sys/class/misc/fsynccontrol/fsync_enabled ]; then
+  echo "0" > /sys/class/misc/fsynccontrol/fsync_enabled
+  echo "* Fsync Control = Disabled *" | tee  -a $LOG
+ fi; 
+ if [ -e /sys/module/sync/parameters/fsync ]; then
+  echo "0" > /sys/module/sync/parameters/fsync
+  echo "* Fsync = Disabled *" | tee  -a $LOG
+ fi;
+ if  [ -e /sys/module/sync/parameters/fsync_enabled ]; then
+  echo "N" > /sys/module/sync/parameters/fsync_enabled
+  echo "* Fsync = Disabled *" | tee  -a $LOG
+ fi;
 fi;
 
 # CHECK  PROCESS =========================================#

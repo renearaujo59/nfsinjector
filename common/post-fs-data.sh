@@ -1,6 +1,6 @@
 #========================================
 # NFS-INJECTOR
-# Codename : HUNTER
+# Codename : CRISIS
 # Version : 5.0
 # Developer : @K1ks
 # Date : 09-03-2019
@@ -22,7 +22,7 @@ chmod 0644 $SCL
 
 if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then	
  if [ -e /sys/class/power_supply/battery/batt_slate_mode ]; then	
- echo "1" > /sys/class/power_supply/battery/batt_slate_mode
+  echo "1" > /sys/class/power_supply/battery/batt_slate_mode
  fi;
 fi;
 
