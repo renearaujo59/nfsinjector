@@ -28,7 +28,7 @@ This Module is Universal , It works on all OS with all kernels ( HMP / EAS ).
 [XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
 # Requirements
-- Magisk v17+ (if not, it should install directly to system)
+- Magisk v18.1+ (if not, it should install directly to system)
 - [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
 # Supporter Suggestions
