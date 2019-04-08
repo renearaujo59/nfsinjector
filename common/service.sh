@@ -192,44 +192,44 @@ fi;
 # CHECK INVADER =========================================#
 
 if [ -e $SBIN/legendary_kernel_tweaks ]; then
- INVADER
  IT=LTK
+ INVADER
 elif [ -e /data/LKT.prop ]; then
- INVADER
  IT=LTK
+ INVADER
 elif [ -e $SBIN/FDE ]; then
- INVADER
  IT=FDE.AI
+ INVADER
 elif [ -e $SYS/bin/L_Speed ]; then
- INVADER
  IT=LSpeed
+ INVADER
 elif [ -e $SYS/xbin/killjoy ]; then
- INVADER
  IT=KillJoy
+ INVADER
 elif [ -e $SYS/xbin/haveged ]; then
- INVADER
  IT=Haveged
+ INVADER
 elif [ -e $SYS/bin/The_Thing ]; then
- INVADER
  IT=The_Thing
+ INVADER
 elif [ -e $SYS/KITANA/COMMON/KI00Rngd ]; then
- INVADER
  IT=Kitana
+ INVADER
 elif [ -e $SYS/xbin/fde ]; then
- INVADER
  IT=FDE
+ INVADER
 elif [ -e $SYS/bin/ABS ]; then
- INVADER
  IT=ABS
+ INVADER
 elif [ -e $SYS/etc/CrossBreeder/CrossBreeder ]; then
- INVADER
  IT=CrossBeeder
+ INVADER
 elif [ -e $SYS/etc/init.d/999fde ]; then
- INVADER
  IT=FDE
-elif [ -e /data/data/com.paget96.lspeed/files/binaries/busybox ]; then
  INVADER
+elif [ -e /data/data/com.paget96.lspeed/files/binaries/busybox ]; then
  IT=LSpeedApp
+ INVADER
 fi;
 
 # CONFIGURATION =========================================#
