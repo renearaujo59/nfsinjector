@@ -1,8 +1,8 @@
 id=nfsinjector
 name=NFS-INJECTOR
-version=v5.5
-versionCode=555
+version=v6.0
+versionCode=600
 author=K1ks
 description=PowerFull And Advanced Kernel / RAM Manager For Efficiency and Energy
 support=https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231
-donate=https://paypal.me/k1ksxda
+donate=paypal.me/k1ksxda

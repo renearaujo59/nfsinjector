@@ -22,12 +22,12 @@ Fix PUBG Mobil Lag ( Others Games also )
 
 This Module is Universal , It works on all OS with all kernels ( HMP / EAS ). 
 
-# Thread 
+## Thread 
 ★[MODULE][NFS-INJECTOR][PowerFull And Advanced Management Kernel/Ram][pubgfix]
 
 [XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
-# Requirements
+## Requirements
 - Magisk v18.1+ (if not, it should install directly to system)
 - [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
@@ -37,8 +37,22 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ## Downloads
 [Google Drive](https://drive.google.com/open?id=1GZpVYxd1OyS0PyVBXHyOCjPhI-YnLi8x)
 
-## Beta Members
-@HackerZombie , @HafizZiq , @TarangKarpe , @KilayoRed
+## Testers 
+
+@HafizZiq
+@HarshalRaj
+@player65
+@MaggotLord
+@Apitpro
+@Whiplesh
+@Da_1337_Kamayuk
+@trushtushar
+@Stratonaught
+@AzSuperbored
+@vikash_raj
+@WhiCCX5
+@farhantanjil
+@Westen Dasig
 
 ## NFS - Injector Telegram
 [Telegram Group](https://t.me/nfsinjector)
@@ -49,6 +63,7 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
 
 ## Changelog 
+
 ### V1.0 
 - Initial Release 
 
@@ -192,3 +207,20 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Update Mfk/Emfk calculation .
 - Update Sync module 
 - Update / Fix To Unity 4.0
+
+### V6.0
+- Add CodeName : Steel
+- Improved Fluidity
+- Update Kernel Tasks 
+- Add Status Flash ( Clean Flash )
+- Improved Kill Debugging
+- Improved Swappiness Management
+- Update Minfree/Mfk/EMfk For Ram Management
+- Smart Control ( Automatic Detection )
+- Update Sync Module ( ON/OFF )
+- Add Support For Phantom governor 
+- Add Some Name Packages Game
+- Add Support For Disable Touchwiz Swap
+- Add Low Power Management Levels
+- Update Logging 
+- Update To Unity 4.1
