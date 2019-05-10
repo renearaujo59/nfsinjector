@@ -1,10 +1,10 @@
 #========================================
 # NFS-INJECTOR
-# Codename : CRISIS
-# Version : 5.0
+# Codename : **
+# Version : 6.0
 # Developer : @K1ks
-# Date : 16-03-2019
-# Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
+# Date : 09-04-2019
+# Team : @HafizZiq , @HackerZombie 
 # This file will be read by resetprop
 # Example: Change dpi
 # ro.sf.lcd_density=320
@@ -28,9 +28,3 @@ profiler.debugmonitor=false
 profiler.launch=false
 profiler.hung.dumpdobugreport=false
 profiler.force_disable_ulog=1
-
-
-
-
-
-

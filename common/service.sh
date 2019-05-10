@@ -1,13 +1,15 @@
-#========================================
+﻿#========================================
 # NFS-INJECTOR
-# Codename : HUNTER
-# Version : 5.0
+# Codename : Steel
+# Version : 6.0
 # Developer : @K1ks
-Date=08-04-2019
-# Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
+Date=08-05-2019
+# Testers : @HafizZiq @HarshalRaj @player65 @MaggotLord @Apitpro @Whiplesh @Da_1337_Kamayuk @trushtushar @Stratonaught @AzSuperbored @vikash_raj @WhiCCX5 @farhantanjil @Westen Dasig @im_simple_man
+# Paypal : paypal.me/k1ksxda
 #========================================
+# SMART CONTROL
 ## MODE USER ( mode.txt )
-# 0 = BALANCED ( Def )
+# 0 = BALANCED 
 # 1 = ULTRA 
 # 2 = GAMING
 # 3 = BATTERY_SAVER
@@ -15,6 +17,9 @@ Date=08-04-2019
 # 0 = AUTO ( Def )
 # 1 = ON
 # 2 = OFF
+## SYNC USER ( sync.txt )
+# 0 = OFF ( Def )
+# 1 = ON
 ## DNS USER ( dns.txt )
 # 0 = OFF ( Def )
 # 1 = DNS GUARD ( ADS )
@@ -25,7 +30,7 @@ Date=08-04-2019
 ## SELIUX USER ( linux.txt )
 # 0 = PERMISSIVE ( Def )
 # 1 = ENFORCING
-# SUPPORT GOVERNORS = pixel_schedutil helix_schedutil smurfutil_flex pixutil pwrutilx darkness schedutil blu_schedutil blu_active elementalx zzmoove interactivepro interactiveplus interactiveX interactive ondemand performance
+# SUPPORT GOVERNORS = pixel_schedutil helix_schedutil smurfutil_flex pixutil pwrutilx darkness schedutil blu_schedutil blu_active elementalx zzmoove interactivepro interactiveplus interactiveX interactive phantom ondemand performance
 # SUPPORT SCHEDULER = anxiety fiops sioplus sio zen tripndroid row bfq cfq deadline noop
 # SUPPORT TCP = ascarex sociopath westwood cubic reno
 
@@ -33,17 +38,18 @@ Date=08-04-2019
 
 Path=/data
 if [ ! -d $Path/NFS ]; then
+ ST=Clean
  mkdir -p $Path/NFS
 fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
-LOGMOUNT=/$NFS/nfsmount.log
-V=5.5
+V=6.0
 S=Stable
-Code=Crisis
+Code=Steel
+#CodeT=**
 box=`busybox | awk 'NR==1{print $2}'` 2>/dev/null
-MEM=`free -m | awk '/Mem:/{print $2}'`
-mem=`free | grep Mem |  awk '{print $2}'`;
+MEM=`free -m | awk '/Mem:/{print $2}'` 2>/dev/null
+mem=`free | grep Mem |  awk '{print $2}'`2>/dev/null
 VENDOR=$(getprop ro.product.brand) 2>/dev/null
 ROM=$(getprop ro.build.display.id) 2>/dev/null
 KERNEL=$(uname -r) 2>/dev/null
@@ -54,6 +60,7 @@ MODE=`cat $NFS/mode.txt`;
 DNS=`cat $NFS/dns.txt`;
 SE=`cat $NFS/linux.txt`;
 CP=`cat $NFS/comp.txt`;
+SY=`cat $NFS/sync.txt`;
 FC=`cat /sys/kernel/fast_charge/force_fast_charge`;
 BATT=`cat /sys/class/power_supply/battery/capacity`;
 CHIP=$(getprop ro.product.board) 2>/dev/null
@@ -71,16 +78,16 @@ else
 fi;
 
 if [ -d /sbin/.core/img ]; then
-SBIN=/sbin/.core/img
+ SBIN=/sbin/.core/img
 elif [ -d /sbin/.magisk/img ]; then
-SBIN=/sbin/.magisk/img
+ SBIN=/sbin/.magisk/img
 fi;
 
-INVADER() {
-echo "*...WARNING , BE CAREFUL...*" | tee -a $LOG;
-echo "*...NFS AUTO-EXIT , ABORTING...*" | tee -a $LOG;
-echo "*... $IT FOUND...*" | tee -a $LOG;
-echo "*...CHECK BEFORE NEXT REBOOT...*" | tee -a $LOG;
+ BREAKER() {
+ echo "*...WARNING , BE CAREFUL...*" | tee -a $LOG;
+ echo "*...NFS BREAKER , ABORTING...*" | tee -a $LOG;
+ echo "*... $IT FOUND...*" | tee -a $LOG;
+ echo "*... REMOVE IT AND TRY AGAIN...*" | tee -a $LOG;
 exit 1
 }
 
@@ -101,6 +108,48 @@ elif [ -d /sys/block/loop0/queue/scheduler ]; then
  SA=/sys/block/loop0/queue/scheduler
 fi;
 
+battcheckgov() {
+if grep 'blu_schedutil' $AGB; then
+ gov=blu_schedutil
+elif grep 'zzmoove' $AGB; then
+ gov=zzmoove
+elif grep 'blu_active' $AGB; then
+ gov=blu_active
+elif grep 'smurfutil_flex' $AGB; then
+ gov=smurfutil_flex
+elif grep 'pixutil' $AGB; then
+ gov=pixutil
+elif grep 'pwrutilx' $AGB; then
+ gov=pwrutilx
+elif grep 'helix_schedutil' $AGB; then
+ gov=pixel_schedutil
+elif grep 'pixel_schedutil' $AGB; then
+ gov=pixel_schedutil
+elif grep 'schedutil' $AGB; then
+ gov=schedutil
+elif grep 'darkness' $AGB; then
+ gov=darkness
+elif grep 'elementalx' $AGB; then
+ gov=elementalx
+elif grep 'interactive' $AGB; then
+ gov=interactive
+elif grep 'interactivepro' $AGB; then
+ gov=interactivepro
+elif grep 'interactive_pro' $AGB; then
+ gov=interactive_pro
+elif grep 'interactiveplus' $AGB; then
+ gov=interactiveplus
+elif grep 'interactivex' $AGB; then
+ gov=interactivex
+elif grep 'phantom' $AGB; then
+ gov=phantom
+elif grep 'ondemand' $AGB; then
+ gov=ondemand
+elif grep 'performance' $AGB; then
+ gov=performance
+fi;
+}
+balcheckgov() {
 if grep 'smurfutil_flex' $AGB; then
  gov=smurfutil_flex
 elif grep 'pixutil' $AGB; then
@@ -114,7 +163,7 @@ elif grep 'pixel_schedutil' $AGB; then
 elif grep 'schedutil' $AGB; then
  gov=schedutil
 elif grep 'darkness' $AGB; then
- gov=darkness 
+ gov=darkness
 elif grep 'elementalx' $AGB; then
  gov=elementalx
 elif grep 'interactive' $AGB; then
@@ -127,6 +176,8 @@ elif grep 'interactiveplus' $AGB; then
  gov=interactiveplus
 elif grep 'interactivex' $AGB; then
  gov=interactivex
+elif grep 'phantom' $AGB; then
+ gov=phantom
 elif grep 'blu_active' $AGB; then
  gov=blu_active
 elif grep 'blu_schedutil' $AGB; then
@@ -134,12 +185,59 @@ elif grep 'blu_schedutil' $AGB; then
 elif grep 'zzmoove' $AGB; then
  gov=zzmoove
 elif grep 'ondemand' $AGB; then
- gov=ondemand 
+ gov=ondemand
 elif grep 'performance' $AGB; then
  gov=performance
 fi;
+}
+perfcheckgov() {
+if grep 'smurfutil_flex' $AGB; then
+ gov=smurfutil_flex
+elif grep 'pixutil' $AGB; then
+ gov=pixutil
+elif grep 'pwrutilx' $AGB; then
+ gov=pwrutilx
+elif grep 'helix_schedutil' $AGB; then
+ gov=pixel_schedutil
+elif grep 'pixel_schedutil' $AGB; then
+ gov=pixel_schedutil
+elif grep 'schedutil' $AGB; then
+ gov=schedutil
+elif grep 'darkness' $AGB; then
+ gov=darkness
+elif grep 'elementalx' $AGB; then
+ gov=elementalx
+elif grep 'interactive' $AGB; then
+ gov=interactive
+elif grep 'interactivepro' $AGB; then
+ gov=interactivepro
+elif grep 'interactive_pro' $AGB; then
+ gov=interactive_pro
+elif grep 'interactiveplus' $AGB; then
+ gov=interactiveplus
+elif grep 'interactivex' $AGB; then
+ gov=interactivex
+elif grep 'phantom' $AGB; then
+ gov=phantom
+elif grep 'blu_active' $AGB; then
+ gov=blu_active
+elif grep 'blu_schedutil' $AGB; then
+ gov=blu_schedutil
+elif grep 'zzmoove' $AGB; then
+ gov=zzmoove
+elif grep 'ondemand' $AGB; then
+ gov=ondemand
+elif grep 'performance' $AGB; then
+ gov=performance
+fi;
+}
+battcheckio() {
 if grep 'anxiety' $SA; then 
  sch=anxiety
+elif grep 'maple' $SA; then
+ sch=maple
+elif grep 'noop' $SA; then
+ sch=noop
 elif grep 'zen' $SA; then
  sch=zen
 elif grep 'tripndroid' $SA; then
@@ -153,15 +251,68 @@ elif grep 'fiops' $SA; then
 elif grep 'sioplus' $SA; then
  sch=sioplus
 elif grep 'sio' $SA; then
- sch=sio 
+ sch=sio
 elif grep 'row' $SA; then
  sch=row
 elif grep 'deadline' $SA; then
  sch=deadline
+fi;
+}
+balcheckio() {
+if grep 'zen' $SA; then
+ sch=zen
+elif grep 'tripndroid' $SA; then
+ sch=tripndroid
+elif grep 'cfq' $SA; then
+ sch=cfq
+elif grep 'bfq' $SA; then
+ sch=bfq
+elif grep 'fiops' $SA; then
+ sch=fiops
+elif grep 'sioplus' $SA; then
+ sch=sioplus
+elif grep 'sio' $SA; then
+ sch=sio
+elif grep 'row' $SA; then
+ sch=row
+elif grep 'deadline' $SA; then
+ sch=deadline
+elif grep 'anxiety' $SA; then 
+ sch=anxiety
+elif grep 'maple' $SA; then
+ sch=maple
 elif grep 'noop' $SA; then
  sch=noop
 fi;
-if  grep -l 'ascarex' $TACC; then
+}
+perfcheckio() {
+if grep 'fiops' $SA; then
+ sch=fiops
+elif grep 'sioplus' $SA; then
+ sch=sioplus
+elif grep 'sio' $SA; then
+ sch=sio
+elif grep 'row' $SA; then
+ sch=row
+elif grep 'deadline' $SA; then
+ sch=deadline
+elif grep 'zen' $SA; then
+ sch=zen
+elif grep 'tripndroid' $SA; then
+ sch=tripndroid
+elif grep 'cfq' $SA; then
+ sch=cfq
+elif grep 'bfq' $SA; then
+ sch=bfq
+elif grep 'anxiety' $SA; then 
+ sch=anxiety
+elif grep 'maple' $SA; then
+ sch=maple
+elif grep 'noop' $SA; then
+ sch=noop
+fi;
+}
+if grep -l 'ascarex' $TACC; then
  tcp=ascarex
 elif  grep -l 'sociopath' $TACC; then
  tcp=sociopath
@@ -174,65 +325,222 @@ else
 fi;
 if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then	
  if [ -e /sys/class/power_supply/battery/batt_slate_mode ]; then	
- echo "0" > /sys/class/power_supply/battery/batt_slate_mode
+  echo "0" > /sys/class/power_supply/battery/batt_slate_mode
  fi;
 fi;
 
-# WAITING TIME =========================================#
-
-while ! pgrep com.android ; 
-do
- sleep 66
-done
-
-if [ -e $LOG ]; then
- rm $LOG;
-fi;
-
-# CHECK INVADER =========================================#
+# CHECK BREAKER =========================================#
 
 if [ -e $SBIN/legendary_kernel_tweaks ]; then
  IT=LTK
- INVADER
-elif [ -e /data/LKT.prop ]; then
- IT=LTK
- INVADER
+  BREAKER
 elif [ -e $SBIN/FDE ]; then
  IT=FDE.AI
- INVADER
+ BREAKER
 elif [ -e $SYS/bin/L_Speed ]; then
  IT=LSpeed
- INVADER
+ BREAKER
 elif [ -e $SYS/xbin/killjoy ]; then
  IT=KillJoy
- INVADER
-elif [ -e $SYS/xbin/haveged ]; then
- IT=Haveged
- INVADER
+ BREAKER
 elif [ -e $SYS/bin/The_Thing ]; then
  IT=The_Thing
- INVADER
+ BREAKER
 elif [ -e $SYS/KITANA/COMMON/KI00Rngd ]; then
  IT=Kitana
- INVADER
+ BREAKER
 elif [ -e $SYS/xbin/fde ]; then
  IT=FDE
- INVADER
+ BREAKER
 elif [ -e $SYS/bin/ABS ]; then
  IT=ABS
- INVADER
+ BREAKER
 elif [ -e $SYS/etc/CrossBreeder/CrossBreeder ]; then
  IT=CrossBeeder
- INVADER
+ BREAKER
 elif [ -e $SYS/etc/init.d/999fde ]; then
  IT=FDE
- INVADER
+ BREAKER
 elif [ -e /data/data/com.paget96.lspeed/files/binaries/busybox ]; then
  IT=LSpeedApp
- INVADER
+ BREAKER
 fi;
 
-# CONFIGURATION =========================================#
+# SMART CONTROL  =========================================#
+
+if [ "$MEM" -lt 1280 ]; then
+ RAMCAP=0
+ level=0
+ stage=LowRam
+elif [ "$MEM" -lt 2560 ]; then
+ RAMCAP=1
+ level=1
+ stage=Middle_Range
+elif [ "$MEM" -lt 3840 ]; then
+ RAMCAP=1
+ level=2
+ stage=Middle_Range
+elif [ "$MEM" -lt 5120 ]; then
+ RAMCAP=1
+ level=3
+ stage=High_Ram
+elif [ "$MEM" -lt 6400 ]; then
+ RAMCAP=1
+ level=4
+ stage=Flagship
+else
+ RAMCAP=1
+ level=4
+ stage=Flagship_Killer
+fi;
+
+if [ -d /data/data/com.FDGEntertainment.Oceanhorn.gp ]; then 
+ Game=Oceanhorn
+ play=1
+elif [ -d /data/data/com.ironhidegames.android.ironmarines ]; then 
+ Game=IronMarines
+ play=1
+elif [ -d /data/data/com.ironhidegames.android.kingdomrush4 ]; then 
+ Game=KingdomRush
+ play=1
+elif [ -d /data/data/com.bandainamcoent.dblegends_ww ]; then 
+ Game=DbLegend
+ play=1
+elif [ -d /data/data/com.ea.games.r3_row ]; then 
+ Game=RealRacing
+ play=1
+elif [ -d /data/data/com.epicgames.fortnite ]; then 
+ Game=Fortnite
+ play=1
+elif [ -d /data/data/com.jagex.runescape.android ]; then 
+ Game=Runscape
+ play=1
+elif [ -d /data/data/com.nianticlabs.pokemongo ]; then 
+ Game=PokemonGo
+ play=1
+elif [ -d /data/data/com.namcobandaigames.pacmantournaments ]; then 
+ Game=PacMan
+ play=1
+elif [ -d /data/data/com.nintendo.zara ]; then 
+ Game=SuperMarioRun
+ play=1
+elif [ -d /data/data/com.supercell.clashroyale ]; then 
+ Game=ClashRoyale
+ play=1
+elif [ -d /data/data/com.supercell.clashofclans ]; then 
+ Game=ClashOfClans
+ play=1
+elif [ -d /data/data/jp.konami.pesam ]; then 
+ Game=PeS
+ play=1
+elif [ -d /data/data/com.nintendo.zaga ]; then 
+ Game=DragaliaLost
+ play=1
+elif [ -d /data/data/com.neowiz.game.koh ]; then 
+ Game=KingdomOfHero
+ play=1
+elif [ -d /data/data/com.ninjakiwi.bloonstd6 ]; then 
+ Game=Bloons
+ play=1
+elif [ -d /data/data/com.dts.freefireth ]; then 
+ Game=GarenaFreeFire
+ play=1
+elif [ -d /data/data/com.robtopx.geometryjump ]; then 
+ Game=GeometryDash
+ play=1
+elif [ -d /data/data/com.t2ksports.nba2k19 ]; then 
+ Game=NbA2k19
+ play=1
+elif [ -d /data/data/com.squareenixmontreal.hitmansniperandroid ]; then 
+ Game=HitmanSniper
+ play=1
+elif [ -d /data/data/com.vg.bsm ]; then 
+ Game=BlackShot
+ play=1
+elif [ -d /data/data/com.nekki.shadowfight3 ]; then 
+ Game=ShadowFight3
+ play=1
+elif [ -d /data/data/com.nekki.shadowfight ]; then 
+ Game=ShadowFight2
+ play=1
+elif [ -d /data/data/com.ea.game.nfs14_row ]; then 
+ Game=NfSNoLimit
+ play=1
+elif [ -d /data/data/com.FireproofStudios.TheRoom4 ]; then 
+ Game=Room
+ play=1
+elif [ -d /data/data/com.netease.lztgglobal ]; then 
+ Game=CyberHunter
+ play=1
+elif [ -d /data/data/com.gameloft.android.ANMP.GloftA8HM ]; then 
+ Game=Asphalt8
+ play=1
+elif [ -d /data/data/com.theonegames.gunshipbattle ]; then 
+ Game=GunshipBattle
+ play=1
+elif [ -d /data/data/com.tencent.tmgp.pubgmhd ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.tencent.tmgp.pubgm ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.tencent.iglite ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.pubg.krmobile ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.rekoo.pubgm ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.tencent.ig ]; then 
+ Game=Pubg
+ play=1
+elif [ -d /data/data/com.mobile.legends ]; then 
+ Game=MobileLegends
+ play=1
+else
+ Game=NotFound
+ play=0
+fi;
+
+if [ $level -eq "0" ] && [ $play -eq "0" ]; then
+ land=1
+elif [ $level -eq "0" ] && [ $play -eq "1" ]; then
+ land=2
+elif [ $level -eq "1" ] && [ $play -eq "0" ]; then
+ land=1
+elif [ $level -eq "1" ] && [ $play -eq "1" ]; then
+ land=1
+elif [ $level -eq "2" ] && [ $play -eq "0" ]; then
+ land=0
+elif [ $level -eq "2" ] && [ $play -eq "1" ]; then
+land=0
+elif [ $level -eq "3" ] && [ $play -eq "0" ]; then
+ land=0
+elif [ $level -eq "3" ] && [ $play -eq "1" ]; then
+ land=0
+elif [ $level -eq "4" ] && [ $play -eq "0" ]; then
+ land=3
+elif [ $level -eq "4" ] && [ $play -eq "1" ]; then
+ land=0
+fi;
+
+if [ $land -eq "0" ]; then
+ balcheckgov
+ balcheckio
+elif [ $land -eq "1" ]; then
+ perfcheckgov
+ perfcheckio
+elif [ $land -eq "2" ]; then
+ perfcheckgov
+ perfcheckio
+elif [ $land -eq "3" ]; then
+ battcheckgov
+ battcheckio
+fi;
+
+# SETTINGS =========================================#
 
 if [ ! -e $NFS/governor.txt ]; then
  echo "$gov" > $NFS/governor.txt
@@ -244,7 +552,7 @@ if [ ! -e $NFS/tcp.txt ]; then
  echo "$tcp" > $NFS/tcp.txt
 fi
 if [ ! -e $NFS/mode.txt ]; then
- echo "0" > $NFS/mode.txt
+ echo "$land" > $NFS/mode.txt
 fi;
 if [ ! -e $NFS/dns.txt ]; then
  echo "0" > $NFS/dns.txt
@@ -258,26 +566,37 @@ fi;
 if [ ! -e $NFS/sync.txt ]; then
  echo "0" > $NFS/sync.txt
 fi;
-if [ "$MEM" -lt 2560 ]; then
- RAMCAP=0
-else
- RAMCAP=1
+
+# WAITING TIME =========================================#
+
+while ! pgrep com.android ; 
+do
+ sleep 85
+done
+
+if [ -e $LOG ]; then
+ rm $LOG;
 fi;
 
 # LOGGING =========================================#
 
 echo "================================================" | tee -a $LOG;
-echo "//////// ϟ NFS-INJECTOR(TM) LOGGING SYSTEM ϟ ~~ " |  tee -a $LOG;
+echo "//////// ⚡ NFS-INJECTOR(TM) LOGGING SYSTEM ⚡ ~~ " |  tee -a $LOG;
 echo "//////// UNIVERSAL MAGISK MODULE ~~ " |  tee -a $LOG;
 echo "//////// CodeName : $Code ~~ " |  tee -a $LOG;
+#echo "//////// CodeTest : $CodeT ~~ " |  tee -a $LOG;
 echo "//////// Version : $V ~~ " |  tee -a $LOG;
 echo "//////// Status : $S ~~ " |  tee -a $LOG;
+if [ "$ST" == "Clean" ]; then
+ echo "//////// Flash : $ST ~~ " |  tee -a $LOG;
+fi;
 echo "//////// Date : $Date ~~ " |  tee -a $LOG;
 echo "================================================" | tee -a $LOG;
 echo "* START : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
 echo "** Vendor : $VENDOR *" | tee -a $LOG;
 echo "** Device : $APP *" | tee -a $LOG;
 echo "** Soc : $SOC *" | tee -a $LOG;
+echo "** Type : $stage *" | tee -a $LOG;
 echo "** Rom : $ROM *" | tee -a $LOG;
 echo "** Root : $ROOT *" | tee -a $LOG;
 echo "** Android : $(getprop ro.build.version.release) *" | tee -a $LOG;
@@ -295,17 +614,21 @@ fi;
 if [ -d /data/data/flar2.exkernelmanager ]; then 
  echo "** Ex Kernel : Installed *" | tee -a $LOG;
 fi;
-
+echo "** Game Found : $Game *" | tee -a $LOG;
 echo "" | tee -a $LOG;
+
 if [ $MODE -eq "2" ]; then
- echo "* GAMING MODE = Initialized *" | tee -a $LOG;
+ M=Gaming
 elif [ $MODE -eq "1" ]; then
- echo "* ULTRA MODE = Initialized *" | tee -a $LOG;
+ M=Ultra
 elif [ $MODE -eq "3" ]; then
- echo "* BATTERY SAVER MODE = Initialized *" | tee -a $LOG;
+ M=Battery_Saver
 else
- echo "* BALANCED MODE = Initialized *" | tee -a $LOG;
+ M=Balanced
 fi;
+
+echo "* Smart Control = Active *" | tee -a $LOG;
+echo "* Awareness Mode = $M *" | tee -a $LOG;
 
 # SELINUX PERMISSIVE =========================================#
 
@@ -316,9 +639,9 @@ if [ -e /sys/fs/selinux/enforce ]; then
 fi;
 
 if [ $SE -eq 1 ]; then
- echo "* SE Linux = Enforcing *" |  tee -a $LOG;
+ echo "* Security-Enhanced Linux = Enforcing *" |  tee -a $LOG;
 else 
- echo "* SE Linux = Permissive *" |  tee -a $LOG;
+ echo "* Security-Enhanced Linux = Permissive *" |  tee -a $LOG;
 fi;
 
 # MMC CRC =========================================#
@@ -344,7 +667,7 @@ fi;
 
 if [ -e $SYS/etc/sysctl.conf ]; then
  mv -f $SYS/etc/sysctl.conf $SYS/etc/sysctl.conf.bak
-echo "* Tuner System  = Disabled *" |  tee -a $LOG;
+echo "* Tuner Sysctl System  = Disabled *" |  tee -a $LOG;
 fi;
 if [ -e /sys/devices/14ac0000.mali/dvfs ]; then
  chmod 0000 /sys/devices/14ac0000.mali/dvfs
@@ -391,51 +714,49 @@ sysctl -e -w fs.leases-enable=1 2>/dev/null
 sysctl -e -w fs.dir-notify-enable=0 2>/dev/null
 sysctl -e -w vm.compact_memory=1 2>/dev/null
 sysctl -e -w vm.compact_unevictable_allowed=1 2>/dev/null
-echo "* VM Kernel = Activated *" |  tee -a $LOG;
-
-# KILL DEBUGGING =========================================#
-
+#Panic Off
 sysctl -e -w vm.panic_on_oom=0 2>/dev/null
 sysctl -e -w kernel.panic_on_oops=0 2>/dev/null
 sysctl -e -w kernel.panic=0 2>/dev/null
-echo "* Kill Debugging = Activated *" |  tee -a $LOG;
+sysctl -e -w kernel.panic_on_warn=0 2>/dev/null
+echo "* Virtual Memory = Optimized *" |  tee -a $LOG;
 
-# Low Memory Killer =========================================#
+# LOW MEM KILLER =========================================#
 
 if [ "$MODE" -eq "2" ]; then
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*9/100)*1024/4));
- EP=$((($MEM*15/100)*1024/4));
+ FP=$((($MEM*2/100)*1024/4));
+ VP=$((($MEM*3/100)*1024/4));
+ SR=$((($MEM*4/100)*1024/4));
+ HP=$((($MEM*5/100)*1024/4));
+ CR=$((($MEM*11/100)*1024/4));
+ EP=$((($MEM*20/100)*1024/4));  
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
  MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "1" ]; then
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*9/100)*1024/4));
- EP=$((($MEM*15/100)*1024/4));
+ FP=$((($MEM*2/100)*1024/4));
+ VP=$((($MEM*3/100)*1024/4));
+ SR=$((($MEM*4/100)*1024/4));
+ HP=$((($MEM*5/100)*1024/4));
+ CR=$((($MEM*11/100)*1024/4));
+ EP=$((($MEM*20/100)*1024/4));  
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
  MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "3" ]; then
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*10/100)*1024/4));
- EP=$((($MEM*13/100)*1024/4));
+ FP=$((($MEM*2/100)*1024/4));
+ VP=$((($MEM*3/100)*1024/4));
+ SR=$((($MEM*6/100)*1024/4));
+ HP=$((($MEM*10/100)*1024/4));
+ CR=$((($MEM*14/100)*1024/4));
+ EP=$((($MEM*15/100)*1024/4));
  ADJ1=0; ADJ2=100; ADJ3=200; ADJ4=300; ADJ5=900; ADJ6=906 # STOCK
  MFK=$(($FP*4/5))
 else
- FP=$((($MEM*3/100)*1024/4));
- VP=$((($MEM*4/100)*1024/4));
- SR=$((($MEM*5/100)*1024/4));
- HP=$((($MEM*6/100)*1024/4));
- CR=$((($MEM*10/100)*1024/4));
- EP=$((($MEM*13/100)*1024/4));
+ FP=$((($MEM*2/100)*1024/4));
+ VP=$((($MEM*3/100)*1024/4));
+ SR=$((($MEM*6/100)*1024/4));
+ HP=$((($MEM*10/100)*1024/4));
+ CR=$((($MEM*14/100)*1024/4));
+ EP=$((($MEM*15/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
  MFK=$(($VP*4/5))
 fi;
@@ -459,14 +780,23 @@ chmod 0666 /sys/module/lowmemorykiller/parameters/minfree;
 echo "$ADJ1,$ADJ2,$ADJ3,$ADJ4,$ADJ5,$ADJ6" > /sys/module/lowmemorykiller/parameters/adj;
 echo "$FP,$VP,$SR,$HP,$CR,$EP" > /sys/module/lowmemorykiller/parameters/minfree;
 
-MFK1=$(($MFK/3))
+if [ "$MODE" -eq "2" ]; then
+ MFK1=$(($MFK/2))
+elif [ "$MODE" -eq "1" ]; then
+ MFK1=$(($MFK/3))
+elif [ "$MODE" -eq "3" ]; then
+ MFK1=$(($MFK/4))
+else
+ MFK1=$(($MFK/3))
+fi; 
+
 sysctl -e -w vm.min_free_kbytes=$MFK;
 
 if [ -e /proc/sys/vm/extra_free_kbytes ]; then
  sysctl -e -w vm.extra_free_kbytes=$MFK1;
  setprop sys.sysctl.extra_free_kbytes $MFK1;
 fi;
-echo "* Low Memory Killer = Activated *" |  tee -a $LOG;
+echo "* Full Ram Management = Activated *" |  tee -a $LOG;
 
 # PROPERTY  =========================================#
 
@@ -508,7 +838,7 @@ setprop ENFORCE_PROCESS_LIMIT false
 echo "* Balanced Property = Activated *" |  tee -a $LOG;
 fi;
 
-# CPU_BOOST  =========================================#
+# CPU_BOOST =========================================#
 
 if [ "$MODE" -eq "2" ]; then
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
@@ -662,7 +992,7 @@ elif [ "$MODE" -eq "1" ]; then
  KB=$(($MEM*2/5))
 elif [ "$MODE" -eq "3" ]; then
  RQ=0
- NOM=2
+ NOM=0
  NR=64
  KB=$(($MEM*2/15))
 else
@@ -696,7 +1026,9 @@ for I in `find /sys/devices/platform -name iostats`;
 do  
  echo "0" > $I;
 done
-echo "* I/O Scheduler $SCH = Activated *" |  tee -a $LOG;
+
+echo "* I/O Scheduling = Tweaked *" |  tee -a $LOG;
+echo "* Scheduler $SCH = Enabled *" |  tee -a $LOG;
 
 # CPU POWER =========================================#
 
@@ -704,14 +1036,36 @@ CPU=/sys/devices/system/cpu
 GOV=$(cat $NFS/governor.txt);
 
 if [ -d $CPU/cpu9 ]; then
- for C in 0 1 2 3 4 5 6 7 8 9; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
- done;
+ chmod 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
 
  CORES=Deca-Core
  core=10
@@ -721,15 +1075,31 @@ if [ -d $CPU/cpu9 ]; then
   ML=/sys/devices/system/cpu/cpufreq/$GOV
  fi;
 elif [ -d $CPU/cpu7 ]; then
- for C in 0 1 2 3 4 5 6 7; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
- done;
- 
+ chmod 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+
  CORES=Octa-Core
  core=8
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -738,15 +1108,25 @@ elif [ -d $CPU/cpu7 ]; then
   ML=/sys/devices/system/cpu/cpufreq/$GOV
  fi;
 elif [ -d $CPU/cpu5 ]; then
- for C in 0 1 2 3 4 5 ; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
- done;
- 
+ chmod 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+
  CORES=Hexa-Core
  core=6
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -755,15 +1135,19 @@ elif [ -d $CPU/cpu5 ]; then
   ML=/sys/devices/system/cpu/cpufreq/$GOV
  fi;
 elif [ -d $CPU/cpu3 ]; then
- for C in 0 1 2 3; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
- done;
- 
+ chmod 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+
  CORES=Quad-Core
  core=4
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -772,15 +1156,13 @@ elif [ -d $CPU/cpu3 ]; then
   ML=/sys/devices/system/cpu/cpufreq/$GOV
  fi;
 elif [ -d $CPU/cpu1 ]; then
- for C in 0 1; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
- done;
- 
+ chmod 0666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0666 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ echo "$GOV" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+ chmod 0444 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+
  CORES=Dual-Core
  core=2
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -1098,6 +1480,37 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
  TUNE=Tuned
+elif [ "$GOV" == "phantom" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "19000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "85" > $ML/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
 elif [ "$GOV" == "ondemand" ]; then
  echo "90" > $MB/up_threshold 2>/dev/null
  echo "85" > $MB/up_threshold_any_cpu_load 2>/dev/null
@@ -1215,10 +1628,10 @@ elif [ "$GOV" == "blu_active" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1246,10 +1659,10 @@ elif [ "$GOV" == "darkness" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1317,10 +1730,10 @@ elif [ "$GOV" == "interactiveplus" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1348,10 +1761,10 @@ elif [ "$GOV" == "interactive_pro" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1379,10 +1792,10 @@ elif [ "$GOV" == "interactivepro" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1410,10 +1823,10 @@ elif [ "$GOV" == "interactive" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1441,10 +1854,41 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "0" > $ML/enable_prediction 2>/dev/null
  echo "1" > $ML/fast_ramp_down 2>/dev/null
  echo "90" > $ML/go_hispeed_load 2>/dev/null
- echo "20000" > $ML/timer_rate 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
  echo "0" > $ML/io_is_busy 2>/dev/null
- echo "50000" > $ML/min_sample_time 2>/dev/null
- echo "40000" > $ML/timer_slack 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "90" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
+elif [ "$GOV" == "phantom" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "90" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
 #############################################
  echo "0" > $MB/boost 2>/dev/null
  echo "0" > $MB/boostpulse 2>/dev/null
@@ -1788,6 +2232,37 @@ elif [ "$GOV" == "interactivex" ]; then
  echo "60000" > $MB/min_sample_time 2>/dev/null
  echo "80000" > $MB/timer_slack 2>/dev/null
  TUNE=Tuned
+elif [ "$GOV" == "phantom" ]; then
+ echo "0" > $ML/boost 2>/dev/null
+ echo "0" > $ML/boostpulse 2>/dev/null
+ echo "0" > $ML/boostpulse_duration 2>/dev/null
+ echo "1" > $ML/fastlane 2>/dev/null
+ echo "0" > $ML/align_windows 2>/dev/null
+ echo "1" > $ML/use_migration_notif 2>/dev/null
+ echo "1" > $ML/use_sched_load 2>/dev/null
+ echo "0" > $ML/enable_prediction 2>/dev/null
+ echo "1" > $ML/fast_ramp_down 2>/dev/null
+ echo "99" > $ML/go_hispeed_load 2>/dev/null
+ echo "10000" > $ML/timer_rate 2>/dev/null
+ echo "0" > $ML/io_is_busy 2>/dev/null
+ echo "40000" > $ML/min_sample_time 2>/dev/null
+ echo "80000" > $ML/timer_slack 2>/dev/null
+#############################################
+ echo "0" > $MB/boost 2>/dev/null
+ echo "0" > $MB/boostpulse 2>/dev/null
+ echo "0" > $MB/boostpulse_duration 2>/dev/null
+ echo "1" > $MB/fastlane 2>/dev/null
+ echo "0" > $MB/align_windows 2>/dev/null
+ echo "1" > $MB/use_migration_notif 2>/dev/null
+ echo "1" > $MB/use_sched_load 2>/dev/null
+ echo "0" > $MB/enable_prediction 2>/dev/null
+ echo "1" > $MB/fast_ramp_down 2>/dev/null
+ echo "99" > $MB/go_hispeed_load 2>/dev/null
+ echo "12000" > $MB/timer_rate 2>/dev/null
+ echo "0" > $MB/io_is_busy 2>/dev/null
+ echo "60000" > $MB/min_sample_time 2>/dev/null
+ echo "80000" > $MB/timer_slack 2>/dev/null
+ TUNE=Tuned
 elif [ "$GOV" == "ondemand" ]; then
  echo "90" > $MB/up_threshold 2>/dev/null
  echo "85" > $MB/up_threshold_any_cpu_load 2>/dev/null
@@ -1821,6 +2296,58 @@ elif [ "$MODE" -eq "3" ]; then
  CPUBATTERY
 else
  CPUBALANCE
+fi;
+
+# LPM LEVELS =========================================#
+
+LPM=/sys/module/lpm_levels
+
+if [ -d $LPM/parameters ]; then
+ echo "4" > $LPM/enable_low_power/l2 2>/dev/null
+ echo "Y" > $LPM/parameters/lpm_prediction 2>/dev/null
+ echo "0" > $LPM/parameters/sleep_time_override 2>/dev/null
+ echo "N" > $LPM/parameters/sleep_disable 2>/dev/null
+ echo "N" > $LPM/parameters/menu_select 2>/dev/null
+ echo "N" > $LPM/parameters/print_parsed_dt 2>/dev/null
+ echo "100" > $LPM/parameters/red_stddev 2>/dev/null
+ echo "100" > $LPM/parameters/tmr_add 2>/dev/null
+ echo "Y" > $LPM/system/system-pc/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/system-pc/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/system-wifi/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/system-wifi/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/perf/perf-l2-dynret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-dynret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-pc/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-pc/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/perf/perf-l2-ret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-ret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-wifi/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/perf-l2-wifi/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/pwr/pwr-l2-dynret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-dynret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-pc/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-pc/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/pwr/pwr-l2-ret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-ret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-wifi/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/pwr-l2-wifi/suspend_enabled 2>/dev/null 
+for i in 4 5 6 7; do
+ echo "Y" > $LPM/system/perf/cpu$i/pc/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/cpu$i/pc/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/perf/cpu$i/ret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/cpu$i/ret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/cpu$i/wfi/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/perf/cpu$i/wfi/suspend_enabled 2>/dev/null
+done
+for i in 0 1 2 3; do
+ echo "Y" > $LPM/system/pwr/cpu$i/pc/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/cpu$i/pc/suspend_enabled 2>/dev/null
+ echo "N" > $LPM/system/pwr/cpu$i/ret/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/cpu$i/ret/suspend_enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/cpu$i/wfi/idle-enabled 2>/dev/null
+ echo "Y" > $LPM/system/pwr/cpu$i/wfi/suspend_enabled 2>/dev/null 
+done
+echo "* Low Power Levels = Adjusted *" | tee  -a $LOG 
 fi;
 
 # DALVIK TUNER =========================================#
@@ -1911,7 +2438,7 @@ if [ -e /dev/block/zram0 ]; then
  echo "$((ZR*1024*1024))" > /sys/block/zram0/disksize 
  mkswap /dev/block/zram0
  swapon /dev/block/zram0
- sysctl -e -w vm.swappiness=20
+ #sysctl -e -w vm.swappiness=20
  setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
@@ -1924,7 +2451,7 @@ if [ -e /dev/block/zram1 ]; then
  echo "$((ZR*1024*1024))" > /sys/block/zram1/disksize 
  mkswap /dev/block/zram1
  swapon /dev/block/zram1
- sysctl -e -w vm.swappiness=20
+ #sysctl -e -w vm.swappiness=20
  setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
@@ -1937,7 +2464,7 @@ if [ -e /dev/block/zram2 ]; then
  echo "$((ZR*1024*1024))" > /sys/block/zram2/disksize 
  mkswap /dev/block/zram2
  swapon /dev/block/zram2
- sysctl -e -w vm.swappiness=20
+ #sysctl -e -w vm.swappiness=20
  setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
@@ -1954,7 +2481,7 @@ if [ -e /sys/module/zswap/parameters/enabled ]; then
  if [ -e /sys/module/zswap/parameters/max_pool_percent ]; then
   echo "30" > /sys/module/zswap/parameters/max_pool_percent
  fi;
- sysctl -e -w vm.swappiness=30
+ #sysctl -e -w vm.swappiness=30
  echo "* ZSwap = Activated *" |  tee -a $LOG; 
 fi;
 }
@@ -2002,6 +2529,12 @@ elif [ -e /sys/kernel/mm/ksm/run ]; then
  echo "* KSM = Disabled *" |  tee -a $LOG;
 fi;
 
+if [ -e /dev/block/vnswap0 ]; then
+ swapoff /dev/block/vnswap0
+ setprop vnswap.enabled false
+ echo "* Touchwiz Samsung Swap = Disabled *" |  tee -a $LOG;
+fi;
+
 # DEEP SLEEP ENHANCEMENT =========================================#
 
 for i in $(ls /sys/class/scsi_disk/); do
@@ -2018,20 +2551,29 @@ fi;
 # KERNEL TASK  =========================================#
  
 if [ -e /sys/kernel/debug/sched_features ]; then
- echo "NO_GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features
- echo "ARCH_POWER" > /sys/kernel/debug/sched_features
- echo "* Kernel Task Scheduler = Disabled *" |  tee -a $LOG;
+ echo "NO_NORMALIZED_SLEEPER" > /sys/kernel/debug/sched_features 
+ echo "GENTLE_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features 
+ echo "NO_NEW_FAIR_SLEEPERS" > /sys/kernel/debug/sched_features 
+ echo "WAKEUP_PREEMPT" > /sys/kernel/debug/sched_features
+ echo "NO_AFFINE_WAKEUPS" > /sys/kernel/debug/sched_features 
+ echo "* CPU Scheduler = Adjusted *" |  tee -a $LOG;
+fi;
+
+if [ -e /sys/kernel/sched/gentle_fair_sleepers ]; then
+ echo "0" > /sys/kernel/sched/gentle_fair_sleepers
+ echo "* Gentle Fair Sleeper = Disabled *" |  tee -a $LOG
 fi;
 
 # NETWORK SPEED =========================================#
 
 CC=$(cat $NFS/tcp.txt);
 echo "$CC" > /proc/sys/net/ipv4/tcp_congestion_control 
+echo "* Network TCP $CC = Activated *" |  tee -a $LOG;
 sysctl -e -w net.ipv4.tcp_timestamps=0
 sysctl -e -w net.ipv4.tcp_sack=1
 sysctl -e -w net.ipv4.tcp_fack=1
 sysctl -e -w net.ipv4.tcp_window_scaling=1
-echo "* Network TCP $CC = Activated *" |  tee -a $LOG;
+echo "* IPv4 Traffic Performance = Improved *" |  tee -a $LOG;
 
 # GUARD / CLOUDFLARE / GOOGLE =========================================#
 
@@ -2211,7 +2753,7 @@ echo "* Fix GP Services = Activated *" |  tee -a $LOG;
 if [ -e /sys/module/bcmdhd/parameters/wlrx_divide ]; then
  echo "4" > /sys/module/bcmdhd/parameters/wlrx_divide 2>/dev/null
  echo "4" > /sys/module/bcmdhd/parameters/wlctrl_divide 2>/dev/null
- echo "* Wlan Wakelocks = Activated *" |  tee -a $LOG;
+ echo "* Wlan Wakelocks = Blocked *" |  tee -a $LOG;
 fi;
  
 if [ -e /sys/module/wakeup/parameters/enable_bluetooth_timer ]; then
@@ -2229,12 +2771,34 @@ if [ -e /sys/module/wakeup/parameters/enable_bluetooth_timer ]; then
  echo "N" > /sys/module/wakeup/parameters/enable_wlan_ipa_ws 2>/dev/null
  echo "N" > /sys/module/wakeup/parameters/enable_wlan_pno_wl_ws 2>/dev/null
  echo "N" > /sys/module/wakeup/parameters/enable_wcnss_filter_lock_ws 2>/dev/null
- echo "* Switch Wakelocks = Activated *" |  tee -a $LOG;
+ echo "* Wakelocks = Blocked *" |  tee -a $LOG;
 fi;
 
 if [ -e /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
- echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;[timerfd];hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+ echo "IPA_WS;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
  echo "* Boeffla_Wakelock_Blocker = Activated *" |  tee -a $LOG;
+fi;
+
+# ZRAM/ZSWAP/SWAP ADJUSTEMENTS =========================================# 
+
+ZR=`grep -l zram0 /proc/swaps`
+SW=`grep -l swap /proc/swaps`
+ZS=`grep -l zswap /proc/swaps`
+
+if [ -e /proc/swaps ]; then
+ if [ "$ZR" == "/proc/swaps" ]; then
+  sysctl -e -w vm.swappiness=15
+  #sysctl -e -w vm.page-cluster=2
+  echo "* Virtual Swap Compressor = Adjusted*" | tee  -a $LOG
+ elif [ "$SW" == "/proc/swaps" ]; then
+  sysctl -e -w vm.swappiness=15
+  #sysctl -e -w vm.page-cluster=2
+  echo "* Swap Partition Exchanged = Adjusted *" | tee  -a $LOG
+ elif [ "$ZS" == "/proc/swaps" ]; then
+  sysctl -e -w vm.swappiness=15
+  #sysctl -e -w vm.page-cluster=2
+  echo "* Compressed Writeback Cache = Adjusted *" | tee  -a $LOG
+ fi;
 fi;
 
 # KERNEL / MODULES / MASKS DEBUGGERS OFF =========================================#
@@ -2264,13 +2828,13 @@ if [ -e /sys/module/logger/parameters/log_mode ]; then
  echo "2" > /sys/module/logger/parameters/log_mode
 fi;
 
-echo "* Useless Debuggers = Disabled *" |  tee -a $LOG;
+echo "* Debug Logging Killer = Executed *" |  tee -a $LOG;
 
 # MISC MODES =========================================#
 
-if [ -e /sys/class/lcd/panel/power_reduce ]; then
- echo "* LCD Power = Activated *" |  tee -a $LOG	
+if [ -e /sys/class/lcd/panel/power_reduce ]; then	
  echo "1" > /sys/class/lcd/panel/power_reduce
+ echo "* LCD Power = Activated *" |  tee -a $LOG
 fi;
 
 if [ "$MODE" -eq "2" ]; then
@@ -2330,8 +2894,8 @@ else
   echo "* Adreno Idler = Disabled *" |  tee -a $LOG;  
  fi;
  if [ -e /sys/kernel/sched/arch_power ]; then
-  echo "1" > /sys/kernel/sched/arch_power
-  echo "* Arch Power = Enabled *" |  tee -a $LOG
+  echo "0" > /sys/kernel/sched/arch_power
+  echo "* Arch Power = Disabled *" |  tee -a $LOG
  fi;
 fi;
 
@@ -2396,8 +2960,9 @@ fi;
 echo "" | tee -a $LOG;
 echo "* END : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
 echo "================================================" | tee -a $LOG;
-echo "* ϟ NFS-INJECTOR(TM) ϟ *" | tee -a $LOG
-echo "* Copyright(C) K1KS & Team 2019 *" | tee -a $LOG
-echo "* Group t.me/nfsinjector *" | tee -a $LOG
+echo "* ⚡ NFS-INJECTOR(TM) ⚡ *" | tee -a $LOG
+echo "* (C) K1KS & TEAM 2019 *" | tee -a $LOG
+echo "* GIFT : paypal.me/k1ksxda *" | tee -a $LOG
+echo "* TG: t.me/nfsinjector *" | tee -a $LOG
 echo "================================================" | tee -a $LOG;
 exit 0
