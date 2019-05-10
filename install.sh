@@ -70,6 +70,8 @@ print_modname() {
   ui_print " "
   ui_print "* ϟ NFS-INJECTOR ϟ *"
   ui_print " "
+  ui_print "* SMART CONTROL *"
+  ui_print " "
   ui_print "* Module For Forcefulness & Energy Aware *"
   ui_print " "
   ui_print "* Flash , Reboot And Forget *"
