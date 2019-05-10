@@ -3,7 +3,7 @@
 # Codename : Steel
 # Version : 6.0
 # Developer : @K1ks
-Date=08-05-2019
+Date=10-05-2019
 # Testers : @HafizZiq @HarshalRaj @player65 @MaggotLord @Apitpro @Whiplesh @Da_1337_Kamayuk @trushtushar @Stratonaught @AzSuperbored @vikash_raj @WhiCCX5 @farhantanjil @Westen Dasig @im_simple_man
 # Paypal : paypal.me/k1ksxda
 #========================================
