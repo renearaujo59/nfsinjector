@@ -224,3 +224,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Add Low Power Management Levels
 - Update Logging 
 - Update To Unity 4.1
+
+### V6.2
+- HotFix For Redraw Issue
