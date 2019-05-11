@@ -1,9 +1,9 @@
 ﻿#========================================
 # NFS-INJECTOR
 # Codename : Steel
-# Version : 6.0
+# Version : 6.2
 # Developer : @K1ks
-Date=10-05-2019
+Date=11-05-2019
 # Testers : @HafizZiq @HarshalRaj @player65 @MaggotLord @Apitpro @Whiplesh @Da_1337_Kamayuk @trushtushar @Stratonaught @AzSuperbored @vikash_raj @WhiCCX5 @farhantanjil @Westen Dasig @im_simple_man
 # Paypal : paypal.me/k1ksxda
 #========================================
@@ -43,7 +43,7 @@ if [ ! -d $Path/NFS ]; then
 fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
-V=6.0
+V=6.2
 S=Stable
 Code=Steel
 #CodeT=**
@@ -724,21 +724,21 @@ echo "* Virtual Memory = Optimized *" |  tee -a $LOG;
 # LOW MEM KILLER =========================================#
 
 if [ "$MODE" -eq "2" ]; then
- FP=$((($MEM*2/100)*1024/4));
- VP=$((($MEM*3/100)*1024/4));
- SR=$((($MEM*4/100)*1024/4));
- HP=$((($MEM*5/100)*1024/4));
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
  CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*20/100)*1024/4));
+ EP=$((($MEM*21/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
  MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "1" ]; then
- FP=$((($MEM*2/100)*1024/4));
- VP=$((($MEM*3/100)*1024/4));
- SR=$((($MEM*4/100)*1024/4));
- HP=$((($MEM*5/100)*1024/4));
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
  CR=$((($MEM*11/100)*1024/4));
- EP=$((($MEM*20/100)*1024/4));
+ EP=$((($MEM*21/100)*1024/4));
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
  MFK=$(($SR*4/5))
 elif [ "$MODE" -eq "3" ]; then
@@ -751,14 +751,14 @@ elif [ "$MODE" -eq "3" ]; then
  ADJ1=0; ADJ2=100; ADJ3=200; ADJ4=300; ADJ5=900; ADJ6=906 # STOCK
  MFK=$(($FP*4/5))
 else
- FP=$((($MEM*2/100)*1024/4));
- VP=$((($MEM*3/100)*1024/4));
- SR=$((($MEM*6/100)*1024/4));
- HP=$((($MEM*10/100)*1024/4));
- CR=$((($MEM*14/100)*1024/4));
- EP=$((($MEM*15/100)*1024/4));
+ FP=$((($MEM*3/100)*1024/4));
+ VP=$((($MEM*4/100)*1024/4));
+ SR=$((($MEM*5/100)*1024/4));
+ HP=$((($MEM*6/100)*1024/4));
+ CR=$((($MEM*10/100)*1024/4));
+ EP=$((($MEM*13/100)*1024/4))
  ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
- MFK=$(($VP*4/5))
+ MFK=$(($VP*3/5))
 fi;
 
 if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
