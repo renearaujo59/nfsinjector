@@ -227,3 +227,7 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V6.2
 - HotFix For Redraw Issue
+
+### V6.3
+- Update low RAM detection level (Under 2048Mb)
+- Ajustement Smart_Control on Middle_Range devices

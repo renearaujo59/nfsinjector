@@ -1,9 +1,9 @@
 ﻿#========================================
 # NFS-INJECTOR
 # Codename : Steel
-# Version : 6.2
+# Version : 6.3
 # Developer : @K1ks
-Date=11-05-2019
+Date=13-05-2019
 # Testers : @HafizZiq @HarshalRaj @player65 @MaggotLord @Apitpro @Whiplesh @Da_1337_Kamayuk @trushtushar @Stratonaught @AzSuperbored @vikash_raj @WhiCCX5 @farhantanjil @Westen Dasig @im_simple_man
 # Paypal : paypal.me/k1ksxda
 #========================================
@@ -43,7 +43,7 @@ if [ ! -d $Path/NFS ]; then
 fi;
 NFS=$Path/NFS
 LOG=/$NFS/nfs.log
-V=6.2
+V=6.3
 S=Stable
 Code=Steel
 #CodeT=**
@@ -368,7 +368,7 @@ fi;
 
 # SMART CONTROL  =========================================#
 
-if [ "$MEM" -lt 1280 ]; then
+if [ "$MEM" -lt 2048 ]; then
  RAMCAP=0
  level=0
  stage=LowRam
@@ -515,7 +515,7 @@ elif [ $level -eq "1" ] && [ $play -eq "1" ]; then
 elif [ $level -eq "2" ] && [ $play -eq "0" ]; then
  land=0
 elif [ $level -eq "2" ] && [ $play -eq "1" ]; then
-land=0
+ land=1
 elif [ $level -eq "3" ] && [ $play -eq "0" ]; then
  land=0
 elif [ $level -eq "3" ] && [ $play -eq "1" ]; then
@@ -539,6 +539,13 @@ elif [ $land -eq "3" ]; then
  battcheckgov
  battcheckio
 fi;
+
+# WAITING TIME =========================================#
+
+while ! pgrep com.android ; 
+do
+ sleep 85
+done
 
 # SETTINGS =========================================#
 
@@ -566,13 +573,6 @@ fi;
 if [ ! -e $NFS/sync.txt ]; then
  echo "0" > $NFS/sync.txt
 fi;
-
-# WAITING TIME =========================================#
-
-while ! pgrep com.android ; 
-do
- sleep 85
-done
 
 if [ -e $LOG ]; then
  rm $LOG;
