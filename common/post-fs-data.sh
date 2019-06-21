@@ -1,10 +1,6 @@
 #========================================
 # NFS-INJECTOR
-# Codename : CRISIS
-# Version : 5.0
 # Developer : @K1ks
-# Date : 09-03-2019
-# Team : @HafizZiq , @HackerZombie , @KilayoRed , @TarangKarpe
 #========================================
 
 # FAST CHARGE =========================================#
@@ -14,11 +10,9 @@ ACL=/sys/kernel/fast_charge/ac_charge_level
 FL=/sys/kernel/fast_charge/failsafe
 UCL=/sys/kernel/fast_charge/usb_charge_level
 WCL=/sys/kernel/fast_charge/wireless_charge_level
-SCL=/sys/kernel/fast_charge/screen_on_current_limit
 
 chmod 0644 $FFC
 chmod 0644 $FL
-chmod 0644 $SCL
 
 if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then	
  if [ -e /sys/class/power_supply/battery/batt_slate_mode ]; then	
@@ -36,11 +30,6 @@ elif [ -e $FFC ]; then
  echo "1" > $FFC
 fi;
 
-if [ -e $SCL ]; then
- echo "0" > $SCL
-fi;
-
 chmod 0444 $FFC
 chmod 0444 $FL
-chmod 0444 $SCL
 exit 0#

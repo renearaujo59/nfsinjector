@@ -1,10 +1,7 @@
 #========================================
 # NFS-INJECTOR
-# Codename : **
-# Version : 6.0
 # Developer : @K1ks
-# Date : 09-04-2019
-# Team : @HafizZiq , @HackerZombie 
+#========================================
 # This file will be read by resetprop
 # Example: Change dpi
 # ro.sf.lcd_density=320
