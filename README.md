@@ -42,7 +42,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 @HafizZiq
 @HarshalRaj
 @player65
-@MaggotLord
 @Apitpro
 @Whiplesh
 @Da_1337_Kamayuk
@@ -51,7 +50,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 @AzSuperbored
 @vikash_raj
 @WhiCCX5
-@farhantanjil
 @Westen Dasig
 
 ## NFS - Injector Telegram
@@ -231,3 +229,18 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ### V6.3
 - Update low RAM detection level (Under 2048Mb)
 - Ajustement Smart_Control on Middle_Range devices
+
+### V6.5
+- Add CodeName : Archer
+- Add Some Name Packages Game
+- Update Smart_Control For IO Sched
+- Fix Mode Status After Clean Flash
+- Update Minfree/Mfk/EMfk For Ram Management
+- Update Cpu Power , Cultivation added 
+- Add Detection Specific HMP/EAS Kernel Part Tuner ( No Trademark )
+- Add Gpu Optimizer ( No Trademark )
+- Update Dalvik Tuner
+- Update I/O Schreduling , All values readjusted 
+- Log improved , All gamed showing 
+- Update Logging 
+- Update To Unity 4.2
