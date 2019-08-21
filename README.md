@@ -40,17 +40,20 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ## Testers 
 
 @HafizZiq
-@HarshalRaj
+@D347HW15H
 @player65
 @Apitpro
-@Whiplesh
-@Da_1337_Kamayuk
-@trushtushar
-@Stratonaught
+@im_simple_man
 @AzSuperbored
-@vikash_raj
-@WhiCCX5
-@Westen Dasig
+@KilayoRed
+@xlidz
+@HarshalRaj
+@Chipis
+@TarangKarpe
+@chrisdrakos
+@Kookieya
+@Whiplesh
+@trushtushar
 
 ## NFS - Injector Telegram
 [Telegram Group](https://t.me/nfsinjector)
@@ -242,5 +245,24 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Update Dalvik Tuner
 - Update I/O Schreduling , All values readjusted 
 - Log improved , All gamed showing 
-- Update Logging 
+- Update Logging
 - Update To Unity 4.2
+
+### V7.0
+- Add CodeName : DeathStroke
+- Update Minfree/Mfk For Ram Management
+- Update LMK Calculation
+- Update NetSpeed 
+- Update CPU Scheduler 
+- Update All boost update ( Cpuboost , Dsboost .....)
+- Update Boeffla Wakelock Blocker Path
+- Disable Some More debugs 
+- Update Smart_Control Variable
+- Add GPU Frequency Throttling Disabled
+- Update VM for Balanced / Ultra 
+- Add SQLite Query Optimizer
+- Script Cleanups And Rearrange Back 
+- Update Logging
+- Add AARCH Detection
+- Fix Boeffla Wakelock Path
+- Update To Unity 4.3
