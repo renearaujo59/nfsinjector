@@ -1,10 +1,10 @@
 ﻿#========================================
 # NFS-INJECTOR
 # Codename : DeathStroke
-# Version : 7.0
+# Version : 7.5
 # Developer : @K1ks
-Date=21-08-2019
-# Testers : @HafizZiq @D347HW15H @player65 @Apitpro @im_simple_man @AzSuperbored @KilayoRed @xlidz @HarshalRaj @kamikaze702k @Chipis @TarangKarpe @chrisdrakos @Kookieya @Whiplesh @trushtushar
+Date=27-09-2019
+# Testers : @HafizZiq @player65 @Apitpro @im_simple_man @AzSuperbored @KilayoRed @xlidz @HarshalRaj @kamikaze702k @Chipis @TarangKarpe @chrisdrakos @Kookieya @Whiplesh @trushtushar @iSawJig @D347HW15H
 # Paypal : paypal.me/k1ksxda
 #========================================
 # SMART CONTROL
@@ -43,10 +43,10 @@ if [ ! -d $Path/NFS ]; then
 fi;
 NFS=$Path/NFS
 LOG=$NFS/nfs.log
-V=7.0
+V=7.5
 S=Stable
-Code=DeathStroke
-#CodeT=A7
+Code=FlashPoint
+#CodeT=
 box=$(busybox | awk 'NR==1{print $2}') 2>/dev/null
 MEM=$(free -m | awk '/Mem:/{print $2}') 2>/dev/null
 mem=$(free | grep Mem |  awk '{print $2}') 2>/dev/null
@@ -67,7 +67,7 @@ elif [ ! "$CHIP1" = "" ]; then
 elif [ ! "$CHIP2" = "" ]; then
  SOC=$(getprop ro.board.platform) 2>/dev/null
 else
- SOC=Unidentified_Soc
+ SOC="Unidentified Soc"
 fi;
 BATT=$(cat /sys/class/power_supply/battery/capacity)
 if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then
@@ -76,17 +76,23 @@ if [ -e /sys/kernel/fast_charge/ac_charge_level ]; then
  fi;
 fi;
 
-if [ -d /sbin/.core/img ]; then
+# Cutter
+if [ -e $LOG ]; then
+ rm $LOG
+fi;
+
+if [ -d /data/adb/modules ]; then
+ SBIN=/data/adb/modules
+elif [ -d /sbin/.core/img ]; then
  SBIN=/sbin/.core/img
 elif [ -d /sbin/.magisk/img ]; then
  SBIN=/sbin/.magisk/img
 fi;
 
  BREAKER() {
- echo "*...WARNING , BE CAREFUL...*" | tee -a $LOG;
- echo "*...NFS BREAKER , ABORTING...*" | tee -a $LOG;
- echo "*... $IT FOUND...*" | tee -a $LOG;
- echo "*... REMOVE IT AND TRY AGAIN...*" | tee -a $LOG;
+ echo "*...NFS WARNING...*" | tee -a $LOG;
+ echo "*...$IT FOUND...*" | tee -a $LOG;
+ echo "*...ABORTING FOR SECURITY PURPOSES...*" | tee -a $LOG;
 exit 1
 }
 
@@ -111,11 +117,11 @@ if grep 'blu_schedutil' $AGB; then
 elif grep 'sched' $AGB; then
  eas=1
 elif grep 'pwrutil' $AGB; then
-eas=1
+ eas=1
 elif grep 'darkutil' $AGB; then
  eas=1
 elif grep 'schedutil' $AGB; then
-eas=1
+ eas=1
 elif grep 'helix' $AGB; then
  eas=1
 elif grep 'schedalucard' $AGB; then
@@ -174,14 +180,14 @@ if grep 'smurfutil_flex' $AGB; then
  gov=smurfutil_flex
 elif grep 'pixutil' $AGB; then
  gov=pixutil
+elif grep 'schedutil' $AGB; then
+ gov=schedutil
 elif grep 'pwrutilx' $AGB; then
  gov=pwrutilx
 elif grep 'helix_schedutil' $AGB; then
  gov=helix_schedutil
 elif grep 'pixel_schedutil' $AGB; then
  gov=pixel_schedutil
-elif grep 'schedutil' $AGB; then
- gov=schedutil
 elif grep 'interactive' $AGB; then
  gov=interactive
 elif grep 'cultivation' $AGB; then
@@ -217,14 +223,14 @@ if grep 'smurfutil_flex' $AGB; then
  gov=smurfutil_flex
 elif grep 'pixutil' $AGB; then
  gov=pixutil
+elif grep 'schedutil' $AGB; then
+ gov=schedutil
 elif grep 'pwrutilx' $AGB; then
  gov=pwrutilx
 elif grep 'helix_schedutil' $AGB; then
  gov=helix_schedutil
 elif grep 'pixel_schedutil' $AGB; then
  gov=pixel_schedutil
-elif grep 'schedutil' $AGB; then
- gov=schedutil
 elif grep 'elementalx' $AGB; then
  gov=elementalx
 elif grep 'interactive' $AGB; then
@@ -260,20 +266,14 @@ if grep 'anxiety' $SA; then
  sch=anxiety
 elif grep 'maple' $SA; then
  sch=maple
-elif grep 'noop' $SA; then
- sch=noop 
-elif grep 'fiops' $SA; then
- sch=fiops
-elif grep 'sio' $SA; then
- sch=sio
-elif grep 'sioplus' $SA; then
- sch=sioplus 
-elif grep 'row' $SA; then
- sch=row
 elif grep 'zen' $SA; then
  sch=zen
+elif grep 'noop' $SA; then
+ sch=noop
 elif grep 'tripndroid' $SA; then
  sch=tripndroid
+elif grep 'row' $SA; then
+ sch=row
 elif grep 'deadline' $SA; then
  sch=deadline
 elif grep 'cfq' $SA; then
@@ -283,55 +283,45 @@ elif grep 'bfq' $SA; then
 fi;
 }
 balcheckio() {
-if grep 'zen' $SA; then
- sch=zen
-elif grep 'tripndroid' $SA; then
+if grep 'tripndroid' $SA; then
  sch=tripndroid
-elif grep 'sio' $SA; then
- sch=sio
 elif grep 'cfq' $SA; then
  sch=cfq
-elif grep 'bfq' $SA; then
- sch=bfq
-elif grep 'sioplus' $SA; then
- sch=sioplus
-elif grep 'fiops' $SA; then
- sch=fiops
 elif grep 'row' $SA; then
  sch=row
+elif grep 'bfq' $SA; then
+ sch=bfq
 elif grep 'deadline' $SA; then
  sch=deadline
 elif grep 'anxiety' $SA; then
  sch=anxiety
 elif grep 'maple' $SA; then
  sch=maple
+elif grep 'zen' $SA; then
+ sch=zen
 elif grep 'noop' $SA; then
  sch=noop
 fi;
 }
 perfcheckio() {
-if grep 'fiops' $SA; then
- sch=fiops
-elif grep 'sioplus' $SA; then
+if grep 'sioplus' $SA; then
  sch=sioplus
-elif grep 'sio' $SA; then
- sch=sio
-elif grep 'row' $SA; then
- sch=row
 elif grep 'deadline' $SA; then
  sch=deadline
-elif grep 'zen' $SA; then
- sch=zen
-elif grep 'tripndroid' $SA; then
- sch=tripndroid
 elif grep 'cfq' $SA; then
  sch=cfq
+elif grep 'row' $SA; then
+ sch=row
+elif grep 'tripndroid' $SA; then
+ sch=tripndroid
 elif grep 'bfq' $SA; then
  sch=bfq
 elif grep 'anxiety' $SA; then
  sch=anxiety
 elif grep 'maple' $SA; then
  sch=maple
+elif grep 'zen' $SA; then
+ sch=zen
 elif grep 'noop' $SA; then
  sch=noop
 fi;
@@ -350,38 +340,17 @@ fi;
 
 # CHECK BREAKER =========================================#
 
-if [ -e $SBIN/legendary_kernel_tweaks ]; then
- IT=LTK
-  BREAKER
-elif [ -e $SBIN/FDE ]; then
- IT=FDE.AI
+if [ -d $SBIN/legendary_kernel_tweaks ]; then
+ IT="LKT Module"
  BREAKER
-elif [ -e $SYS/bin/L_Speed ]; then
- IT=LSpeed
+elif [ -d $SBIN/FDE ]; then
+ IT="FDE.AI Module"
  BREAKER
-elif [ -e $SYS/xbin/killjoy ]; then
- IT=KillJoy
+elif [ -d /data/app/v.uni* ]; then
+ IT=Vulmax
  BREAKER
-elif [ -e $SYS/bin/The_Thing ]; then
- IT=TheThing
- BREAKER
-elif [ -e $SYS/KITANA/COMMON/KI00Rngd ]; then
- IT=Kitana
- BREAKER
-elif [ -e $SYS/xbin/fde ]; then
- IT=FDE
- BREAKER
-elif [ -e $SYS/bin/ABS ]; then
- IT=ABS
- BREAKER
-elif [ -e $SYS/etc/CrossBreeder/CrossBreeder ]; then
- IT=CrossBeeder
- BREAKER
-elif [ -e $SYS/etc/init.d/999fde ]; then
- IT=FDE
- BREAKER
-elif [ -e /data/data/com.paget96.lspeed/files/binaries/busybox ]; then
- IT=LSpeedApp
+elif [ -d $SBIN/MAGNETAR ]; then
+ IT=MAGNETAR
  BREAKER
 fi;
 
@@ -390,19 +359,19 @@ fi;
 if [ "$MEM" -lt 2048 ]; then
  RAMCAP=0
  level=0
- stage=LowRam
+ stage="Low Ram"
 elif [ "$MEM" -lt 2560 ]; then
  RAMCAP=1
  level=1
- stage=Middle_Range
+ stage="Middle Range"
 elif [ "$MEM" -lt 3840 ]; then
  RAMCAP=1
  level=2
- stage=Middle_Range
+ stage="Middle Range"
 elif [ "$MEM" -lt 5120 ]; then
  RAMCAP=1
  level=3
- stage=High_Ram
+ stage="High Ram"
 elif [ "$MEM" -lt 6400 ]; then
  RAMCAP=1
  level=4
@@ -410,7 +379,7 @@ elif [ "$MEM" -lt 6400 ]; then
 else
  RAMCAP=1
  level=4
- stage=Flagship_Killer
+ stage="Flagship Killer"
 fi;
 
 if [ -d /data/data/com.FDGEntertainment.Oceanhorn.gp ]; then
@@ -504,13 +473,13 @@ elif [ $level -eq "1" ] && [ $play -eq "0" ]; then
 elif [ $level -eq "1" ] && [ $play -eq "1" ]; then
  land=1
 elif [ $level -eq "2" ] && [ $play -eq "0" ]; then
- land=0
+ land=1
 elif [ $level -eq "2" ] && [ $play -eq "1" ]; then
  land=1
 elif [ $level -eq "3" ] && [ $play -eq "0" ]; then
  land=0
 elif [ $level -eq "3" ] && [ $play -eq "1" ]; then
- land=0
+ land=1
 elif [ $level -eq "4" ] && [ $play -eq "0" ]; then
  land=3
 elif [ $level -eq "4" ] && [ $play -eq "1" ]; then
@@ -532,10 +501,6 @@ elif [ $land -eq "3" ]; then
 fi;
 
 # WAITING TIME =========================================#
-
-if [ -e $LOG ]; then
- rm $LOG;
-fi;
 
 while ! pgrep com.android ;
 do
@@ -617,24 +582,35 @@ fi;
 if [ -d /data/data/flar2.exkernelmanager ]; then
  echo "** Ex Kernel : Installed *" | tee -a $LOG;
 fi;
+if [ -d /data/app/com.paget96.lspeedoptimizer* ]; then
+ echo "*...NFS WARNING...*" | tee -a $LOG;
+ echo "*...LSpeed App FOUND...*" | tee -a $LOG;
+ echo "*...USE BOTH AT YOUR OWN RISK...*" | tee -a $LOG;
+ echo "" | tee -a $LOG;
+elif [ -d /data/app/com.paget96.lspeed* ]; then
+ echo "*...NFS WARNING...*" | tee -a $LOG;
+ echo "*...LSpeed App FOUND...*" | tee -a $LOG;
+ echo "*...USE BOTH AT YOUR OWN RISK...*" | tee -a $LOG;
+ echo "" | tee -a $LOG;
+fi;
 if [ -d /data/data/com.FDGEntertainment.Oceanhorn.gp ]; then
  Game=Oceanhorn
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.ironhidegames.android.ironmarines ]; then
- Game=IronMarines
+ Game="Iron Marines"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.ironhidegames.android.kingdomrush4 ]; then
- Game=KingdomRush
+ Game="Kingdom Rush"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.bandainamcoent.dblegends_ww ]; then
- Game=DbLegend
+ Game="Dragon Ball Legend"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.ea.games.r3_row ]; then
- Game=RealRacing
+ Game="Real Racing"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.epicgames.fortnite ]; then
@@ -646,131 +622,119 @@ if [ -d /data/data/com.jagex.runescape.android ]; then
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.nianticlabs.pokemongo ]; then
- Game=PokemonGo
+ Game="Pokémon Go"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.namcobandaigames.pacmantournaments ]; then
- Game=PacMan
+ Game="Pac-Man"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.nintendo.zara ]; then
- Game=SuperMarioRun
+ Game="Super Mario Run"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.supercell.clashroyale ]; then
- Game=ClashRoyale
+ Game="Clash Royale"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.supercell.clashofclans ]; then
- Game=ClashOfClans
+ Game="Clash Of Clans"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/jp.konami.pesam ]; then
- Game=PeS
+ Game="Pes 2019"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.lilithgame.roc.gp ]; then
- Game=RiseOfKingdom
+ Game="Rise Of Kingdoms"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.supercell.brawlstars ]; then
- Game=Brawl_Stars
+ Game="Brawl Stars"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.mgs.sniper1 ]; then
- Game=SniperStrike
+ Game="Sniper Strike"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.nintendo.zaga ]; then
- Game=DragaliaLost
+ Game="Dragalia Lost"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.neowiz.game.koh ]; then
- Game=KingdomOfHero
+ Game="Kingdom Of Hero"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.fours.rrre ]; then
- Game=Mons_Trainer
+ Game="Mons Trainer"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.dts.freefireth ]; then
- Game=GarenaFreeFire
+ Game="Garena Free Fire"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.robtopx.geometryjump ]; then
- Game=GeometryDash
+ Game="Geometry Dash"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.t2ksports.nba2k19 ]; then
- Game=NbA2k19
+ Game="NbA 2019"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.squareenixmontreal.hitmansniperandroid ]; then
- Game=HitmanSniper
+ Game="Hitman Sniper"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.vg.bsm ]; then
- Game=BlackShot
+ Game="Black Shot"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.nekki.shadowfight3 ]; then
- Game=ShadowFight3
+ Game="Shadow Fight 3"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.nekki.shadowfight ]; then
- Game=ShadowFight2
+ Game="Shadow Fight 2"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.ea.game.nfs14_row ]; then
- Game=NfSNoLimit
+ Game="Need For Speed™ No Limits"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.FireproofStudios.TheRoom4 ]; then
- Game=Room
+ Game="The Room"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.netease.lztgglobal ]; then
- Game=CyberHunter
+ Game="Cyber Hunter"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.gameloft.android.ANMP.GloftA9HM ]; then
- Game=Asphalt9
+ Game="Asphalt 9"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.theonegames.gunshipbattle ]; then
- Game=GunshipBattle
+ Game="Gunship Battle"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.tencent.tmgp.pubgmhd ]; then
+if [ -d /data/data/com.tencent* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.tencent.tmgp.pubgm ]; then
+if [ -d /data/data/com.pubg* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.tencent.iglite ]; then
- Game=Pubg
- echo "** Game : $Game *" | tee -a $LOG;
-fi;
-if [ -d /data/data/com.pubg.krmobile ]; then
- Game=Pubg
- echo "** Game : $Game *" | tee -a $LOG;
-fi;
-if [ -d /data/data/com.rekoo.pubgm ]; then
- Game=Pubg
- echo "** Game : $Game *" | tee -a $LOG;
-fi;
-if [ -d /data/data/com.tencent.ig ]; then
+if [ -d /data/data/com.rekoo* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.mobile.legends ]; then
- Game=MobileLegends
+ Game="Mobile Legends"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 if [ -d /data/data/com.netmarble.revolutionthm ]; then
- Game=LineageRev
+ Game="Lineage2 Revolution"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
 
@@ -785,7 +749,6 @@ GOV=$(cat $NFS/governor.txt)
 SY=$(cat $NFS/sync.txt)
 current1=$(getprop dalvik.vm.dex2oat-threads)
 current2=$(getprop dalvik.vm.boot-dex2oat-threads)
-current3=$(getprop persist.dalvik.vm.dex2oat-threads)
 current4=$(getprop dalvik.vm.image-dex2oat-threads)
 current5=$(getprop ro.sys.fw.dex2oat_thread_count)
 CP=$(cat $NFS/comp.txt)
@@ -798,7 +761,7 @@ if [ $MODE -eq "2" ]; then
 elif [ $MODE -eq "1" ]; then
  M=Ultra
 elif [ $MODE -eq "3" ]; then
- M=Battery_Saver
+ M="Battery Saver"
 elif [ $MODE -eq "0" ]; then
  M=Balanced
 fi;
@@ -814,17 +777,33 @@ fi;
 echo "" | tee -a $LOG;
 echo "* START OPTIMIZATIONS : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
 
-# SELINUX PERMISSIVE =========================================#
+# Panic Off =========================================#
+
+sysctl -e -w vm.panic_on_oom=0 2>/dev/null
+sysctl -e -w kernel.panic_on_oops=0 2>/dev/null
+sysctl -e -w kernel.panic=0 2>/dev/null
+sysctl -e -w kernel.panic_on_warn=0 2>/dev/null
+echo "* Kernel Panic = Deactivated *" | tee -a $LOG;
+
+# SELINUX CENTER =========================================#
 
 if [ -e /sys/fs/selinux/enforce ]; then
- setenforce 0
- echo "$SE" > /sys/fs/selinux/enforce
- LIN=$(cat /sys/fs/selinux/enforce)
+ if [ $SE -eq 1 ]; then
+  setenforce 1
+  echo "$SE" > /sys/fs/selinux/enforce
+ fi;
+ if [ $SE -eq 0 ]; then
+  setenforce 0
+  echo "$SE" > /sys/fs/selinux/enforce
+ fi;
 fi;
+
+LIN=$(cat /sys/fs/selinux/enforce)
 
 if [ $LIN -eq 1 ]; then
  echo "* Security-Enhanced Linux = Enforcing *" |  tee -a $LOG;
-else
+fi;
+if [ $LIN -eq 0 ]; then
  echo "* Security-Enhanced Linux = Permissive *" |  tee -a $LOG;
 fi;
 
@@ -857,28 +836,24 @@ fi;
 # VM TWEAKS =========================================#
 
 sync;
-chmod 0644 /proc/sys/*; 2>/dev/null
+chmod 0644 /proc/sys/* 2>/dev/null
 
 if [ "$MODE" -eq "2" ]; then
- sysctl -e -w vm.dirty_background_ratio=3 2>/dev/null
- sysctl -e -w vm.dirty_ratio=15 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=150 2>/dev/null
- sysctl -e -w vm.drop_caches=3 2>/dev/null
+ sysctl -e -w vm.dirty_ratio=90 2>/dev/null
+ sysctl -e -w vm.dirty_background_ratio=25 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=100 2>/dev/null
 elif [ "$MODE" -eq "1" ]; then
- sysctl -e -w vm.dirty_background_ratio=10 2>/dev/null
  sysctl -e -w vm.dirty_ratio=90 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=50 2>/dev/null
- sysctl -e -w vm.drop_caches=1 2>/dev/null
+ sysctl -e -w vm.dirty_background_ratio=25 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=70 2>/dev/null
 elif [ "$MODE" -eq "3" ]; then
- sysctl -e -w vm.dirty_background_ratio=20 2>/dev/null
  sysctl -e -w vm.dirty_ratio=40 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=10 2>/dev/null
- sysctl -e -w vm.drop_caches=0 2>/dev/null
-elif [ "$MODE" -eq "0" ]; then
  sysctl -e -w vm.dirty_background_ratio=10 2>/dev/null
- sysctl -e -w vm.dirty_ratio=90 2>/dev/null
- sysctl -e -w vm.vfs_cache_pressure=50 2>/dev/null
- sysctl -e -w vm.drop_caches=1 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=20 2>/dev/null
+elif [ "$MODE" -eq "0" ]; then
+ sysctl -e -w vm.dirty_ratio=65 2>/dev/null
+ sysctl -e -w vm.dirty_background_ratio=15 2>/dev/null
+ sysctl -e -w vm.vfs_cache_pressure=70 2>/dev/null
 fi;
 sysctl -e -w vm.oom_kill_allocating_task=0 2>/dev/null
 sysctl -e -w vm.block_dump=0 2>/dev/null
@@ -893,11 +868,6 @@ sysctl -e -w vm.compact_memory=1 2>/dev/null
 sysctl -e -w vm.compact_unevictable_allowed=1 2>/dev/null
 sysctl -e -w vm.swappiness=0 2>/dev/null
 sysctl -e -w vm.page-cluster=0 2>/dev/null
-#Panic Off
-sysctl -e -w vm.panic_on_oom=0 2>/dev/null
-sysctl -e -w kernel.panic_on_oops=0 2>/dev/null
-sysctl -e -w kernel.panic=0 2>/dev/null
-sysctl -e -w kernel.panic_on_warn=0 2>/dev/null
 echo "* Virtual Memory = Optimized *" |  tee -a $LOG;
 
 # LOW MEM KILLER =========================================#
@@ -909,7 +879,7 @@ if [ "$MODE" -eq "2" ]; then
  HP=$((($MEM*6/100)*1024/4))
  CR=$((($MEM*11/100)*1024/4))
  EP=$((($MEM*15/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
 elif [ "$MODE" -eq "1" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
@@ -917,7 +887,7 @@ elif [ "$MODE" -eq "1" ]; then
  HP=$((($MEM*6/100)*1024/4))
  CR=$((($MEM*11/100)*1024/4))
  EP=$((($MEM*15/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
 elif [ "$MODE" -eq "3" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
@@ -925,40 +895,70 @@ elif [ "$MODE" -eq "3" ]; then
  HP=$((($MEM*7/100)*1024/4))
  CR=$((($MEM*10/100)*1024/4))
  EP=$((($MEM*12/100)*1024/4))
- ADJ1=0; ADJ2=100; ADJ3=200; ADJ4=300; ADJ5=900; ADJ6=906 # STOCK
-else
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
+elif [ "$MODE" -eq "0" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
  SR=$((($MEM*5/100)*1024/4))
  HP=$((($MEM*7/100)*1024/4))
  CR=$((($MEM*10/100)*1024/4))
  EP=$((($MEM*12/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 # NFS
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
 fi;
 
 if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
- chmod 0666 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk;
+ chmod 0644 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
  echo "0" > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
  setprop lmk.autocalc false
  echo "* Adaptive LMK = Disabled *" |  tee -a $LOG;
 fi;
 if [ -e /sys/module/lowmemorykiller/parameters/debug_level ]; then
- chmod 666 /sys/module/lowmemorykiller/parameters/debug_level;
+ chmod 0644 /sys/module/lowmemorykiller/parameters/debug_level
  echo "0" > /sys/module/lowmemorykiller/parameters/debug_level
- echo "* LMK Debug Level = Disabled *" |  tee -a $LOG;
+ echo "* Debug Level = Disabled *" |  tee -a $LOG;
 fi;
 if [ -e  /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
- chmod 0666 /sys/module/lowmemorykiller/parameters/oom_reaper;
+ chmod 0644 /sys/module/lowmemorykiller/parameters/oom_reaper
  echo "1" >  /sys/module/lowmemorykiller/parameters/oom_reaper
  echo "* oom Reaper = Activated *" |  tee -a $LOG;
 fi;
+if [ -e /sys/module/lowmemorykiller/parameters/trust_adj_chain ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/trust_adj_chain
+ echo "N" > /sys/module/lowmemorykiller/parameters/trust_adj_chain
+ echo "* Trust Adj Chain = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/adj_max_shift ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/adj_max_shift
+ echo "0" > /sys/module/lowmemorykiller/parameters/adj_max_shift
+ echo "* Adj Max Shift = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/lmk_fast_run ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/lmk_fast_run
+ echo "0" > /sys/module/lowmemorykiller/parameters/lmk_fast_run
+ echo "* Lmk Fast Run = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/time_measure ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/time_measure
+ echo "0" > /sys/module/lowmemorykiller/parameters/time_measure
+ echo "* Time Measure = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/quick_select ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/quick_select
+ echo "0" > /sys/module/lowmemorykiller/parameters/quick_select
+ echo "* Quick Select = Disabled *" |  tee -a $LOG;
+fi;
+if [ -e /sys/module/lowmemorykiller/parameters/batch_kill ]; then
+ chmod 0644 /sys/module/lowmemorykiller/parameters/batch_kill
+ echo "0" > /sys/module/lowmemorykiller/parameters/batch_kill
+ echo "* Batch_Kill = Disabled *" |  tee -a $LOG;
+fi;
 
-chmod 0666 /sys/module/lowmemorykiller/parameters/adj;
-chmod 0666 /sys/module/lowmemorykiller/parameters/minfree;
+chmod 0644 /sys/module/lowmemorykiller/parameters/adj
+chmod 0644 /sys/module/lowmemorykiller/parameters/minfree
 echo "$ADJ1,$ADJ2,$ADJ3,$ADJ4,$ADJ5,$ADJ6" > /sys/module/lowmemorykiller/parameters/adj
 echo "$FP,$VP,$SR,$HP,$CR,$EP" > /sys/module/lowmemorykiller/parameters/minfree
 
-MFK=$(($MEM*4))
+MFK=$(($MEM*2))
 MFK1=$(($MFK/2))
 
 sysctl -e -w vm.min_free_kbytes=$MFK 2>/dev/null
@@ -967,45 +967,36 @@ if [ -e /proc/sys/vm/extra_free_kbytes ]; then
  sysctl -e -w vm.extra_free_kbytes=$MFK1 2>/dev/null
  setprop sys.sysctl.extra_free_kbytes $MFK1
 fi;
-echo "* Full Ram Management = Activated *" |  tee -a $LOG;
+echo "* Low Memory Killer = Customized *" |  tee -a $LOG;
 
 # PROPERTY  =========================================#
 
+setprop MIN_HIDDEN_APPS false
+setprop ACTIVITY_INACTIVE_RESET_TIME false
+setprop MIN_RECENT_TASKS false
+setprop PROC_START_TIMEOUT false
+setprop CPU_MIN_CHECK_DURATION false
+setprop GC_TIMEOUT false
+setprop SERVICE_TIMEOUT false
+setprop MIN_CRASH_INTERVAL false
+setprop ENFORCE_PROCESS_LIMIT false
+echo "* Activity Manager Service = Adjusted *" |  tee -a $LOG;
+
 if [ "$MODE" -eq "2" ]; then
- setprop MIN_HIDDEN_APPS false
- setprop ACTIVITY_INACTIVE_RESET_TIME false
- setprop MIN_RECENT_TASKS false
- setprop PROC_START_TIMEOUT false
- setprop CPU_MIN_CHECK_DURATION false
- setprop GC_TIMEOUT false
- setprop SERVICE_TIMEOUT false
- setprop MIN_CRASH_INTERVAL false
- setprop ENFORCE_PROCESS_LIMIT false
- setprop persist.sys.NV_FPSLIMIT 90
- setprop persist.sys.NV_POWERMODE 1
- setprop persist.sys.NV_PROFVER 15
- setprop persist.sys.NV_STEREOCTRL 0
- setprop persist.sys.NV_STEREOSEPCHG 0
- setprop persist.sys.NV_STEREOSEP 20
- setprop persist.sys.use_16bpp_alpha 1
- echo "* Property = Adjusted *" |  tee -a $LOG;
-elif [ "$MODE" -eq "1" ]; then
- setprop MIN_HIDDEN_APPS false
- setprop ACTIVITY_INACTIVE_RESET_TIME false
- setprop MIN_RECENT_TASKS false
- setprop PROC_START_TIMEOUT false
- setprop CPU_MIN_CHECK_DURATION false
- setprop GC_TIMEOUT false
- setprop SERVICE_TIMEOUT false
- setprop MIN_CRASH_INTERVAL false
- setprop ENFORCE_PROCESS_LIMIT false
- echo "* Property = Adjusted  *" |  tee -a $LOG;
-elif [ "$MODE" -eq "3" ]; then
- setprop enforce_process_limit 4
- echo "* Property = Adjusted *" |  tee -a $LOG;
-elif [ "$MODE" -eq "0" ]; then
- setprop ENFORCE_PROCESS_LIMIT false
- echo "* Property = Adjusted *" |  tee -a $LOG;
+setprop persist.sys.composition.type gpu
+setprop persist.sys.ui.hw true
+setprop persist.sys.scrollingcache 3
+setprop persist.sys.use_16bpp_alpha 1
+setprop persist.sys.NV_FPSLIMIT 60
+setprop persist.sys.NV_POWERMODE 1
+setprop persist.sys.NV_PROFVER 15
+setprop persist.sys.NV_STEREOCTRL 0
+setprop persist.sys.NV_STEREOSEPCHG 0
+setprop persist.sys.NV_STEREOSEP 20
+setprop persist.sampling_profiler 0
+setprop persist.android.strictmode 0
+setprop persist.sys.use_dithering 0
+echo "* Gaming Property = Enabled  *" |  tee -a $LOG;
 fi;
 
 # CPU_BOOST =========================================#
@@ -1013,114 +1004,114 @@ fi;
 if [ "$MODE" -eq "2" ]; then
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/input_boost_duration
-  echo "150" > /sys/module/cpu_input_boost/parameters/input_boost_duration
+  echo "120" > /sys/module/cpu_input_boost/parameters/input_boost_duration
   echo "* CPU Boost : Input Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms
-  echo "150" > /sys/module/cpu_boost/parameters/input_boost_ms
+  echo "120" > /sys/module/cpu_boost/parameters/input_boost_ms
   echo "* CPU Boost : Input Ms = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms_s2 ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "75" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "* CPU Boost : Input Ms_S2 = Enabled *" | tee  -a $LOG;
+  echo "60" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
+  echo "* CPU Boost : Input Ms S2 = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "30" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "15" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "30" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "15" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/general_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/general_stune_boost
   echo "10" > /sys/module/cpu_input_boost/parameters/general_stune_boost
-  echo "* CPU Boost : General_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* CPU Boost : General Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_boost_duration
-  echo "150" > /sys/module/dsboost/parameters/input_boost_duration
+  echo "120" > /sys/module/dsboost/parameters/input_boost_duration
   echo "* Dsboost : Input Boost Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_stune_boost
-  echo "150" > /sys/module/dsboost/parameters/input_stune_boost
-  echo "* Dsboost : Input_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "120" > /sys/module/dsboost/parameters/input_stune_boost
+  echo "* Dsboost : Input Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/sched_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/sched_stune_boost
   echo "10" > /sys/module/dsboost/parameters/sched_stune_boost
-  echo "* Dsboost : Sched_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* Dsboost : Sched Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_boost_duration
-  echo "150" > /sys/module/dsboost/parameters/cooldown_boost_duration
+  echo "120" > /sys/module/dsboost/parameters/cooldown_boost_duration
   echo "* Dsboost : Cooldown Boost Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_stune_boost
   echo "10" > /sys/module/dsboost/parameters/cooldown_stune_boost
-  echo "* Dsboost : Cooldown_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* Dsboost : Cooldown Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
 elif [ "$MODE" -eq "1" ]; then
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/input_boost_duration
-  echo "125" > /sys/module/cpu_input_boost/parameters/input_boost_duration
+  echo "120" > /sys/module/cpu_input_boost/parameters/input_boost_duration
   echo "* CPU Boost : Input Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms
-  echo "125" > /sys/module/cpu_boost/parameters/input_boost_ms
+  echo "120" > /sys/module/cpu_boost/parameters/input_boost_ms
   echo "* CPU Boost : Input Ms = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms_s2 ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms_s2
   echo "50" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "* CPU Boost : Input Ms_S2 = Enabled *" | tee  -a $LOG;
+  echo "* CPU Boost : Input Ms S2 = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "30" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "10" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "30" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "10" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/general_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/general_stune_boost
   echo "10" > /sys/module/cpu_input_boost/parameters/general_stune_boost
-  echo "* CPU Boost : General_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* CPU Boost : General Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_boost_duration
-  echo "125" > /sys/module/dsboost/parameters/input_boost_duration
+  echo "120" > /sys/module/dsboost/parameters/input_boost_duration
   echo "* Dsboost : Input Boost Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_stune_boost
-  echo "125" > /sys/module/dsboost/parameters/input_stune_boost
-  echo "* Dsboost : Input_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "120" > /sys/module/dsboost/parameters/input_stune_boost
+  echo "* Dsboost : Input Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/sched_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/sched_stune_boost
   echo "10" > /sys/module/dsboost/parameters/sched_stune_boost
-  echo "* Dsboost : Sched_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* Dsboost : Sched Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_boost_duration
-  echo "125" > /sys/module/dsboost/parameters/cooldown_boost_duration
+  echo "120" > /sys/module/dsboost/parameters/cooldown_boost_duration
   echo "* Dsboost : Cooldown Boost Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_stune_boost
   echo "10" > /sys/module/dsboost/parameters/cooldown_stune_boost
-  echo "* Dsboost : Cooldown_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* Dsboost : Cooldown Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
 elif [ "$MODE" -eq "3" ]; then
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
@@ -1136,22 +1127,22 @@ elif [ "$MODE" -eq "3" ]; then
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms_s2 ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms_s2
   echo "0" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "* CPU Boost : Input Ms_S2 = Disabled *" | tee  -a $LOG;
+  echo "* CPU Boost : Input Ms S2 = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/dynamic_stune_boost
   echo "0" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Disabled *" | tee  -a $LOG;
+  echo "* CPU Boost : Dyn Stune Boost = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
   echo "0" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost ; Dyn_Stune_Boost = Disabled *" | tee  -a $LOG;
+  echo "* CPU Boost ; Dyn Stune Boost = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/general_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/general_stune_boost
   echo "0" > /sys/module/cpu_input_boost/parameters/general_stune_boost
-  echo "* CPU Boost : General_Stune_Boost = Disabled *" | tee  -a $LOG;
+  echo "* CPU Boost : General Stune Boost = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_boost_duration
@@ -1166,68 +1157,73 @@ elif [ "$MODE" -eq "3" ]; then
  if [ -e /sys/module/dsboost/parameters/sched_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/sched_stune_boost
   echo "0" > /sys/module/dsboost/parameters/sched_stune_boost
-  echo "* Dsboost : Sched_Stube_Boost = Disabled *" | tee  -a $LOG;
+  echo "* Dsboost : Sched Stube Boost = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_boost_duration
   echo "0" > /sys/module/dsboost/parameters/cooldown_boost_duration
-  echo "* Dsboost : Cooldown_Boost_Duration = Disabled *" | tee  -a $LOG;
+  echo "* Dsboost : Cooldown Boost Duration = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_stune_boost
   echo "0" > /sys/module/dsboost/parameters/cooldown_stune_boost
-  echo "* Dsboost : Cooldown_Stune_Boost = Disabled *" | tee  -a $LOG;
+  echo "* Dsboost : Cooldown Stune Boost = Disabled *" | tee  -a $LOG;
  fi;
 elif [ "$MODE" -eq "0" ]; then
  if [ -e /sys/module/cpu_input_boost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/input_boost_duration
-  echo "60" > /sys/module/cpu_input_boost/parameters/input_boost_duration
+  echo "50" > /sys/module/cpu_input_boost/parameters/input_boost_duration
   echo "* CPU Boost : Input Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms
-  echo "60" > /sys/module/cpu_boost/parameters/input_boost_ms
+  echo "50" > /sys/module/cpu_boost/parameters/input_boost_ms
   echo "* CPU Boost : Input Ms = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/input_boost_ms_s2 ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "30" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
-  echo "* CPU Boost : Input Ms_S2 = Enabled *" | tee  -a $LOG;
+  echo "25" > /sys/module/cpu_boost/parameters/input_boost_ms_s2
+  echo "* CPU Boost : Input Ms S2 = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "20" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "5" > /sys/module/cpu_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/cpu_input_boost/parameters/dynamic_stune_boost ]; then
   chmod 0644 /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "20" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
-  echo "* CPU Boost : Dyn_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "5" > /sys/module/cpu_input_boost/parameters/dynamic_stune_boost
+  echo "* CPU Boost : Dyn Stune Boost = Enabled *" | tee  -a $LOG;
+fi;
+if [ -e /sys/module/cpu_input_boost/parameters/general_stune_boost ]; then
+  chmod 0644 /sys/module/cpu_input_boost/parameters/general_stune_boost
+  echo "0" > /sys/module/cpu_input_boost/parameters/general_stune_boost
+  echo "* CPU Boost : General Stune Boost = Disabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_boost_duration
-  echo "60" > /sys/module/dsboost/parameters/input_boost_duration
+  echo "50" > /sys/module/dsboost/parameters/input_boost_duration
   echo "* Dsboost : Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/input_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/input_stune_boost
-  echo "60" > /sys/module/dsboost/parameters/input_stune_boost
-  echo "* Dsboost : Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "50" > /sys/module/dsboost/parameters/input_stune_boost
+  echo "* Dsboost : Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/sched_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/sched_stune_boost
-  echo "10" > /sys/module/dsboost/parameters/sched_stune_boost
-  echo "* Dsboost : Sched_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "5" > /sys/module/dsboost/parameters/sched_stune_boost
+  echo "* Dsboost : Sched Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_boost_duration ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_boost_duration
-  echo "60" > /sys/module/dsboost/parameters/cooldown_boost_duration
-  echo "* Dsboost : Cooldown_Boost_Duration = Enabled *" | tee  -a $LOG;
+  echo "50" > /sys/module/dsboost/parameters/cooldown_boost_duration
+  echo "* Dsboost : Cooldown Boost Duration = Enabled *" | tee  -a $LOG;
  fi;
  if [ -e /sys/module/dsboost/parameters/cooldown_stune_boost ]; then
   chmod 0644 /sys/module/dsboost/parameters/cooldown_stune_boost
   echo "10" > /sys/module/dsboost/parameters/cooldown_stune_boost
-  echo "* Dsboost : Cooldown_Stune_Boost = Enabled *" | tee  -a $LOG;
+  echo "* Dsboost : Cooldown Stune Boost = Enabled *" | tee  -a $LOG;
  fi;
 fi;
 
@@ -1236,55 +1232,52 @@ fi;
 if [ -e /sys/module/msm_performance/parameters/touchboost ]; then
  chmod 0644 /sys/module/msm_performance/parameters/touchboost
  echo "0" > /sys/module/msm_performance/parameters/touchboost
- echo "* TouchBoost : MSM = Disabled *" | tee -a $LOG;
+ echo "* TouchBoost MSM = Disabled *" | tee -a $LOG;
 fi;
 if [ -e /sys/module/cpu_boost/parameters/boost_ms ]; then
  chmod 0644 /sys/module/cpu_boost/parameters/boost_ms
  echo "0" > /sys/module/cpu_boost/parameters/boost_ms
- echo "* CPU : Boost Ms = Disabled *" | tee  -a $LOG;
+ echo "* CPU Boost Ms = Disabled *" | tee  -a $LOG;
 fi;
 if [ -e /sys/module/cpu_boost/parameters/sched_boost_on_input ]; then
  chmod 0644 /sys/module/cpu_boost/parameters/sched_boost_on_input
  echo "N" > /sys/module/cpu_boost/parameters/sched_boost_on_input
- echo "* CPU : Sched Boost On Input = Disabled *" | tee  -a $LOG;
+ echo "* CPU Sched Boost On Input = Disabled *" | tee  -a $LOG;
 fi;
-
 if [ -e /sys/power/pnpmgr/touch_boost ]; then
  chmod 0644 /sys/power/pnpmgr/touch_boost
  echo "0" > /sys/power/pnpmgr/touch_boost
- echo "* Touch_Boost : PNP = Disabled *" | tee  -a $LOG;
+ echo "* Touch Boost : PNP = Disabled *" | tee  -a $LOG;
 fi;
 
 # I/O SCHED =========================================#
 
-MMC=$(ls -d /sys/block/mmc*)
-DM=$(ls -d /sys/block/dm-*)
-SD=$(ls -d /sys/block/sd*)
-LOOP=$(ls -d /sys/block/loop*)
-RAM=$(ls -d /sys/block/ram*)
-ZRAM=$(ls -d /sys/block/zram*)
+ALL=$(ls -d /sys/block/*)
 SCH=$(cat $NFS/scheduler.txt)
 
 if [ "$MODE" -eq "2" ]; then
  RQ=2
  NOM=0
  NR=128
+ KB=128
 elif [ "$MODE" -eq "1" ]; then
  RQ=2
  NOM=0
  NR=128
+ KB=128
 elif [ "$MODE" -eq "3" ]; then
  RQ=0
  NOM=0
  NR=64
+ KB=64
 elif [ "$MODE" -eq "0" ]; then
  RQ=2
  NOM=0
  NR=128
+ KB=128
 fi;
 
-for X in $MMC $SD $DM $LOOP $RAM $ZRAM
-do
+for X in $ALL; do
  echo "$SCH" > $X/queue/scheduler 2>/dev/null
  echo "0" > $X/queue/rotational 2>/dev/null
  echo "0" > $X/queue/iostats 2>/dev/null
@@ -1292,24 +1285,23 @@ do
  echo "$NR" > $X/queue/nr_requests 2>/dev/null
  echo "$NOM" > $X/queue/nomerges 2>/dev/null
  echo "$RQ" > $X/queue/rq_affinity 2>/dev/null
- echo "$NR" > $X/queue/read_ahead_kb 2>/dev/null
+ echo "$KB" > $X/queue/read_ahead_kb 2>/dev/null
  echo "0" > $X/queue/iosched/slice_idle 2>/dev/null
- echo "2" > $X/queue/iosched/fifo_batch 2>/dev/null
- echo "0" > $X/queue/iosched/front_merges 2>/dev/null
- echo "4" > $X/queue/iosched/writes_starved 2>/dev/null
- echo "350" > $X/queue/iosched/read_expire 2>/dev/null
- echo "3500" > $X/queue/iosched/write_expire 2>/dev/null
- echo "350" > $X/queue/iosched/sync_read_expire 2>/dev/null
- echo "3500" > $X/queue/iosched/sync_write_expire 2>/dev/null
- echo "350" > $X/queue/iosched/async_read_expire 2>/dev/null
- echo "3500" > $X/queue/iosched/async_write_expire 2>/dev/null
+ echo "16" > $X/queue/iosched/fifo_batch 2>/dev/null
+ echo "1" > $X/queue/iosched/front_merges 2>/dev/null
+ echo "2" > $X/queue/iosched/writes_starved 2>/dev/null
+ echo "500" > $X/queue/iosched/read_expire 2>/dev/null
+ echo "5000" > $X/queue/iosched/write_expire 2>/dev/null
+ echo "500" > $X/queue/iosched/sync_read_expire 2>/dev/null
+ echo "5000" > $X/queue/iosched/sync_write_expire 2>/dev/null
+ echo "500" > $X/queue/iosched/async_read_expire 2>/dev/null
+ echo "5000" > $X/queue/iosched/async_write_expire 2>/dev/null
 done
 
 if [ "`ls /sys/devices/virtual/bdi/179*/read_ahead_kb`" ]; then
- for RH in /sys/devices/virtual/bdi/179*/read_ahead_kb
-do
- echo "$KB" > $RH
-done
+ for RH in /sys/devices/virtual/bdi/179*/read_ahead_kb; do
+  echo "$KB" > $RH
+ done
 fi; 2>/dev/null
 
 for I in `find /sys/devices/platform -name iostats`
@@ -1324,12 +1316,12 @@ echo "* I/O Scheduling = Tweaked *" |  tee -a $LOG;
 
 if [ -d $CPU/cpu9 ]; then
  for C in 0 1 2 3 4 5 6 7 8 9; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
  done
 
  CORES=Deca-Core
@@ -1341,14 +1333,14 @@ if [ -d $CPU/cpu9 ]; then
  fi;
 elif [ -d $CPU/cpu7 ]; then
  for C in 0 1 2 3 4 5 6 7; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
  done
- 
+
  CORES=Octa-Core
  core=8
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -1357,15 +1349,15 @@ elif [ -d $CPU/cpu7 ]; then
   ML=/sys/devices/system/cpu/cpufreq/$GOV
  fi;
 elif [ -d $CPU/cpu5 ]; then
- for C in 0 1 2 3 4 5 ; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
+ for C in 0 1 2 3 4 5; do
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
  done
- 
+
  CORES=Hexa-Core
  core=6
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -1375,14 +1367,14 @@ elif [ -d $CPU/cpu5 ]; then
  fi;
 elif [ -d $CPU/cpu3 ]; then
  for C in 0 1 2 3; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
  done
- 
+
  CORES=Quad-Core
  core=4
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -1392,14 +1384,14 @@ elif [ -d $CPU/cpu3 ]; then
  fi;
 elif [ -d $CPU/cpu1 ]; then
  for C in 0 1; do
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0666 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
-  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor 
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0644 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  echo "$GOV" > /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
+  chmod 0444 /sys/devices/system/cpu/cpu$C/cpufreq/scaling_governor
  done
- 
+
  CORES=Dual-Core
  core=2
  ML=/sys/devices/system/cpu/cpu0/cpufreq/$GOV
@@ -2511,11 +2503,11 @@ fi;
 
 chmod 0444 $ML
 chmod 0444 $MB
-echo "* CPU Power $CORES $GOV = $TUNE *" |  tee -a $LOG;
+echo "* CPU Power($CORES) : $GOV = $TUNE *" |  tee -a $LOG;
 }
 
 if [ "$MODE" -eq "2" ]; then
- CPUBALANCE
+ CPUULTRA
 elif [ "$MODE" -eq "1" ]; then
  CPUULTRA
 elif [ "$MODE" -eq "3" ]; then
@@ -2539,6 +2531,7 @@ if [ -e $GPU/max_pwrlevel ]; then
   #fi;
  echo "* GPU Scaling = Optimized *" | tee -a $LOG;
 fi;
+
 if [ -e /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate ]; then 
  echo "1" > /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate
  echo "Y" > /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate
@@ -2554,8 +2547,8 @@ fi;
 
 GPUUL() {
 if [ -e $GPU/devfreq/adrenoboost ]; then 
- echo "2" > $GPU/devfreq/adrenoboost
- echo "* AdrenoBoost = Medium *" | tee -a $LOG;
+ echo "3" > $GPU/devfreq/adrenoboost
+ echo "* AdrenoBoost = High *" | tee -a $LOG;
 fi;
 }
 GPUBAT() {
@@ -2566,8 +2559,8 @@ fi;
 }
 GPUBAL() {
 if [ -e $GPU/devfreq/adrenoboost ]; then 
- echo "1" > $GPU/devfreq/adrenoboost
- echo "* AdrenoBoost = Low *" | tee -a $LOG;
+ echo "2" > $GPU/devfreq/adrenoboost
+ echo "* AdrenoBoost =  Medium *" | tee -a $LOG;
 fi;
 }
 
@@ -2864,10 +2857,6 @@ if [ ! "$current2" = "" ]; then
  setprop dalvik.vm.boot-dex2oat-threads $core
  echo "* Dalvik Tuner Dex2oat Boot = Activated *" |  tee -a $LOG;
 fi;
-if [ ! "$current3" = "" ]; then
- setprop persist.dalvik.vm.dex2oat-threads $core
- echo "* Dalvik Tuner Pers Dex2oat = Activated *" |  tee -a $LOG;
-fi;
 if [ ! "$current4" = "" ]; then
  setprop dalvik.vm.image-dex2oat-threads $core
  echo "* Dalvik Tuner Img Dex2oat = Activated *" |  tee -a $LOG;
@@ -2969,7 +2958,7 @@ if [ -e /sys/module/zswap/parameters/enabled ]; then
 fi;
 }
 
-ZR=$(($MEM/2))
+ZR=$(($MEM*2/3))
 
 if [ "$CP" -eq "1" ]; then
  swapON 2>/dev/null
@@ -3036,12 +3025,10 @@ fi;
 
 echo "$CC" > /proc/sys/net/ipv4/tcp_congestion_control
 echo "* Network TCP : $CC = Activated *" |  tee -a $LOG;
-sysctl -e -w net.ipv4.tcp_low_latency=0
-sysctl -e -w net.ipv4.tcp_dsack=1
-sysctl -e -w net.ipv4.tcp_ecn=2
-sysctl -e -w net.ipv4.tcp_timestamps=1
-sysctl -e -w net.ipv4.tcp_window_scaling=1
+sysctl -e -w net.ipv4.tcp_timestamps=0
 sysctl -e -w net.ipv4.tcp_sack=1
+sysctl -e -w net.ipv4.tcp_fack=1
+sysctl -e -w net.ipv4.tcp_window_scaling=1
 echo "* IPv4 Traffic Performance = Improved *" |  tee -a $LOG;
 
 # GUARD / CLOUDFLARE / GOOGLE / VERISIGN / CLEANBROWSING =========================================#
@@ -3215,7 +3202,7 @@ pm enable com.google.android.gsf/.update.SystemUpdatePanoActivity
 pm enable com.google.android.gsf/.update.SystemUpdateService
 pm enable com.google.android.gsf/.update.SystemUpdateService$Receiver
 pm enable com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver
-echo "* Fix GP Services = Activated *" |  tee -a $LOG;
+echo "* Google Wakelocks = Fixed *" |  tee -a $LOG;
 
 # WAKELOCKS =========================================#
 
@@ -3225,7 +3212,7 @@ if [ -e /sys/module/bcmdhd/parameters/wlrx_divide ]; then
  echo "* Wlan Wakelocks = Blocked *" |  tee -a $LOG;
 fi;
 
-if [ -e /sys/module/wakeup/parameters/enable_bluetooth_timer ]; then
+if [ -d /sys/module/wakeup/parameters ]; then
  echo "Y" > /sys/module/wakeup/parameters/enable_bluetooth_timer 2>/dev/null
  echo "N" > /sys/module/wakeup/parameters/enable_ipa_ws 2>/dev/null
  echo "Y" > /sys/module/wakeup/parameters/enable_netlink_ws 2>/dev/null
@@ -3245,10 +3232,10 @@ fi;
 
 if [ -e /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
  echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;[timerfd];hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/devices/virtual/misc/boeffla_wakelock_blocker/wakelock_blocker
- echo "* Boeffla_Wakelock_Blocker 1 = Activated *" |  tee -a $LOG;
+ echo "* Boeffla Wakelock Blocker = Activated *" |  tee -a $LOG;
 elif [ -e /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker ]; then
  echo "wlan_pno_wl;wlan_ipa;wcnss_filter_lock;[timerfd];hal_bluetooth_lock;IPA_WS;sensor_ind;wlan;netmgr_wl;qcom_rx_wakelock;wlan_wow_wl;wlan_extscan_wl;NETLINK;bam_dmux_wakelock;IPA_RM12" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
- echo "* Boeffla_Wakelock_Blocker 2 = Activated *" |  tee -a $LOG;
+ echo "* Boeffla Wakelock Blocker = Activated *" |  tee -a $LOG;
 fi;
 
 # ZRAM/ZSWAP/SWAP ADJUSTEMENTS =========================================#
@@ -3259,15 +3246,15 @@ ZS=$(grep -l zswap /proc/swaps)
 
 if [ -e /proc/swaps ]; then
  if [ "$ZR" == "/proc/swaps" ]; then
-  sysctl -e -w vm.swappiness=10
+  sysctl -e -w vm.swappiness=65
   #sysctl -e -w vm.page-cluster=2
   echo "* Virtual Swap Compressor = Adjusted *" | tee  -a $LOG;
  elif [ "$SW" == "/proc/swaps" ]; then
-  sysctl -e -w vm.swappiness=10
+  sysctl -e -w vm.swappiness=65
   #sysctl -e -w vm.page-cluster=2
   echo "* Swap Partition Exchanged = Adjusted *" | tee  -a $LOG;
  elif [ "$ZS" == "/proc/swaps" ]; then
-  sysctl -e -w vm.swappiness=10
+  sysctl -e -w vm.swappiness=65
   #sysctl -e -w vm.page-cluster=2
   echo "* Compressed Writeback Cache = Adjusted *" | tee  -a $LOG;
  fi;
@@ -3363,7 +3350,7 @@ elif [ "$MODE" -eq "3" ]; then
 elif [ "$MODE" -eq "0" ]; then
  if [ -e /sys/module/workqueue/parameters/power_efficient ]; then
   chmod 0644 /sys/module/workqueue/parameters/power_efficient
-  echo "Y" > /sys/module/workqueue/parameters/power_efficient
+  echo "N" > /sys/module/workqueue/parameters/power_efficient
   echo "* Power Save Workqueues = Enabled *" |  tee -a $LOG;
  fi;
  if [ -e /sys/module/adreno_idler/parameters/adreno_idler_active ]; then
@@ -3426,7 +3413,7 @@ fi;
 # SQLITE QUERY OPTIMIZER =========================================#
 
 ARM(){
-echo "* SQLite Query Optimizer = ARM Not Supported *" | tee  -a $LOG;
+echo "* SQLite Optimizer = ARM Not Supported *" | tee  -a $LOG;
 }
 
 SQLITE3() {
@@ -3466,22 +3453,22 @@ if [ $INTER -gt $RUN ]; then
   echo "Database $i:  VACUUM=$resVac  REINDEX=$resIndex" | tee -a $SQ;
  done
 	  
- echo "* SQLite Query Optimizer = Executed *" | tee  -a $LOG;
+ echo "* SQLite Optimizer = Executed *" | tee  -a $LOG;
 else
-echo "* SQLite Query Optimizer = Dont Need *" | tee  -a $LOG;
+echo "* SQLite Optimizer = Already Executed *" | tee  -a $LOG;
 fi;
 }
 
 if [ "$ARCH" == "armeabi-v7a" ]; then
-ARM
+ ARM
 elif [ "$ARCH" == "armeabi" ]; then
-ARM
+ ARM
 elif [ -e $SYS/bin/sqlite3 ]; then
-SQLITE3
+ SQLITE3
 elif [ -e $SYS/xbin/sqlite3 ]; then
-SQLITE3
+ SQLITE3
 else
- echo "* SQLite Query Optimizer = Miss Binary *" | tee  -a $LOG;
+ echo "* SQLite Query Optimizer = Missing Binary *" | tee  -a $LOG;
 fi;
 
 # CLEANER SYSTEM =========================================#
@@ -3492,7 +3479,7 @@ rm -f /data/system/usagestats/*.txt 2>/dev/null
 rm -f /data/tombstones/*.log 2>/dev/null
 rm -f /data/tombstones/*.txt 2>/dev/null
 
-echo "* Cleaner System = Executed *" | tee  -a $LOG;
+echo "* System Cleaner = Executed *" | tee  -a $LOG;
 
 # CHECK  PROCESS =========================================#
 
@@ -3502,6 +3489,7 @@ else
  echo "* ALL FUNCTIONS = PARTIAL *" |  tee -a $LOG;
 fi;
 
+sync;
 echo "* END OF OPTIMIZATIONS : $( date +"%m-%d-%Y %H:%M:%S" ) *" | tee -a $LOG;
 echo "================================================" | tee -a $LOG;
 echo "* ⚡ NFS-INJECTOR(TM) ⚡ *" | tee -a $LOG;
