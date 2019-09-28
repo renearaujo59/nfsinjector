@@ -282,3 +282,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Update Dalvik Tuner
 - Remove Some Props Lines
 - Fix All Perms
+
+### V7.6
+- Hotfix For PUBG Detection

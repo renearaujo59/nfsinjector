@@ -3,7 +3,7 @@
 # Codename : DeathStroke
 # Version : 7.5
 # Developer : @K1ks
-Date=27-09-2019
+Date=28-09-2019
 # Testers : @HafizZiq @player65 @Apitpro @im_simple_man @AzSuperbored @KilayoRed @xlidz @HarshalRaj @kamikaze702k @Chipis @TarangKarpe @chrisdrakos @Kookieya @Whiplesh @trushtushar @iSawJig @D347HW15H
 # Paypal : paypal.me/k1ksxda
 #========================================
@@ -43,7 +43,7 @@ if [ ! -d $Path/NFS ]; then
 fi;
 NFS=$Path/NFS
 LOG=$NFS/nfs.log
-V=7.5
+V=7.6
 S=Stable
 Code=FlashPoint
 #CodeT=
@@ -446,17 +446,11 @@ elif [ -d /data/data/com.gameloft.android.ANMP.GloftA9HM ]; then
  play=1
 elif [ -d /data/data/com.theonegames.gunshipbattle ]; then
  play=1
-elif [ -d /data/data/com.tencent.tmgp.pubgmhd ]; then
+elif [ -d /data/app/com.tencent* ]; then
  play=1
-elif [ -d /data/data/com.tencent.tmgp.pubgm ]; then
+elif [ -d /data/app/com.pubg* ]; then
  play=1
-elif [ -d /data/data/com.tencent.iglite ]; then
- play=1
-elif [ -d /data/data/com.pubg.krmobile ]; then
- play=1
-elif [ -d /data/data/com.rekoo.pubgm ]; then
- play=1
-elif [ -d /data/data/com.tencent.ig ]; then
+elif [ -d /data/app/com.rekoo* ]; then
  play=1
 elif [ -d /data/data/com.mobile.legends ]; then
  play=1
@@ -717,15 +711,15 @@ if [ -d /data/data/com.theonegames.gunshipbattle ]; then
  Game="Gunship Battle"
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.tencent* ]; then
+if [ -d /data/app/com.tencent* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.pubg* ]; then
+if [ -d /data/app/com.pubg* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
-if [ -d /data/data/com.rekoo* ]; then
+if [ -d /data/app/com.rekoo* ]; then
  Game=Pubg
  echo "** Game : $Game *" | tee -a $LOG;
 fi;
@@ -879,7 +873,7 @@ if [ "$MODE" -eq "2" ]; then
  HP=$((($MEM*6/100)*1024/4))
  CR=$((($MEM*11/100)*1024/4))
  EP=$((($MEM*15/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000
 elif [ "$MODE" -eq "1" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
@@ -887,7 +881,7 @@ elif [ "$MODE" -eq "1" ]; then
  HP=$((($MEM*6/100)*1024/4))
  CR=$((($MEM*11/100)*1024/4))
  EP=$((($MEM*15/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000
 elif [ "$MODE" -eq "3" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
@@ -895,7 +889,7 @@ elif [ "$MODE" -eq "3" ]; then
  HP=$((($MEM*7/100)*1024/4))
  CR=$((($MEM*10/100)*1024/4))
  EP=$((($MEM*12/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000
 elif [ "$MODE" -eq "0" ]; then
  FP=$((($MEM*2/100)*1024/4))
  VP=$((($MEM*3/100)*1024/4))
@@ -903,7 +897,7 @@ elif [ "$MODE" -eq "0" ]; then
  HP=$((($MEM*7/100)*1024/4))
  CR=$((($MEM*10/100)*1024/4))
  EP=$((($MEM*12/100)*1024/4))
- ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000 
+ ADJ1=0; ADJ2=117; ADJ3=235; ADJ4=411; ADJ5=823; ADJ6=1000
 fi;
 
 if [ -e /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk ]; then
@@ -983,20 +977,20 @@ setprop ENFORCE_PROCESS_LIMIT false
 echo "* Activity Manager Service = Adjusted *" |  tee -a $LOG;
 
 if [ "$MODE" -eq "2" ]; then
-setprop persist.sys.composition.type gpu
-setprop persist.sys.ui.hw true
-setprop persist.sys.scrollingcache 3
-setprop persist.sys.use_16bpp_alpha 1
-setprop persist.sys.NV_FPSLIMIT 60
-setprop persist.sys.NV_POWERMODE 1
-setprop persist.sys.NV_PROFVER 15
-setprop persist.sys.NV_STEREOCTRL 0
-setprop persist.sys.NV_STEREOSEPCHG 0
-setprop persist.sys.NV_STEREOSEP 20
-setprop persist.sampling_profiler 0
-setprop persist.android.strictmode 0
-setprop persist.sys.use_dithering 0
-echo "* Gaming Property = Enabled  *" |  tee -a $LOG;
+ setprop persist.sys.composition.type gpu
+ setprop persist.sys.ui.hw true
+ setprop persist.sys.scrollingcache 3
+ setprop persist.sys.use_16bpp_alpha 1
+ setprop persist.sys.NV_FPSLIMIT 60
+ setprop persist.sys.NV_POWERMODE 1
+ setprop persist.sys.NV_PROFVER 15
+ setprop persist.sys.NV_STEREOCTRL 0
+ setprop persist.sys.NV_STEREOSEPCHG 0
+ setprop persist.sys.NV_STEREOSEP 20
+ setprop persist.sampling_profiler 0
+ setprop persist.android.strictmode 0
+ setprop persist.sys.use_dithering 0
+ echo "* Gaming Property = Enabled  *" |  tee -a $LOG;
 fi;
 
 # CPU_BOOST =========================================#
