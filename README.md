@@ -288,3 +288,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V7.7
 - Hotfix For VnSwap
+
+### V7.8
+- Hotfix Zram/Zswap Part

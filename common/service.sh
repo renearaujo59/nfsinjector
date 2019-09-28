@@ -43,7 +43,7 @@ if [ ! -d $Path/NFS ]; then
 fi;
 NFS=$Path/NFS
 LOG=$NFS/nfs.log
-V=7.6
+V=7.8
 S=Stable
 Code=FlashPoint
 #CodeT=
@@ -2888,6 +2888,11 @@ if [ -e /dev/block/zram2 ]; then
  setprop zram.disksize 0
  echo "* ZRAM2 = Disabled *" |  tee -a $LOG;
 fi;
+if [ -e /dev/block/vnswap0 ]; then
+ swapoff /dev/block/vnswap0
+ setprop vnswap.enabled false
+ echo "* Touchwiz Samsung Swap = Disabled *" |  tee -a $LOG;
+fi;
 }
 
 swapON() {
@@ -2929,6 +2934,11 @@ if [ -e /dev/block/zram2 ]; then
  setprop ro.config.zram.support true
  setprop zram.disksize $ZR
  echo "* ZRAM2 = Activated for $ZR MB *" |  tee -a $LOG;
+fi;
+if [ -e /dev/block/vnswap0 ]; then
+ swapon /dev/block/vnswap0
+ setprop vnswap.enabled true
+ echo "* Touchwiz Samsung Swap = Enabled *" |  tee -a $LOG;
 fi;
 }
 
@@ -2978,12 +2988,6 @@ elif [ -e /sys/kernel/mm/ksm/run ]; then
  echo "0" > /sys/kernel/mm/ksm/run
  setprop ro.config.ksm.support false
  echo "* KSM = Disabled *" |  tee -a $LOG;
-fi;
-
-if [ -e /dev/block/vnswap0 ]; then
- swapoff /dev/block/vnswap0
- setprop vnswap.enabled false
- echo "* Touchwiz Samsung Swap = Disabled *" |  tee -a $LOG;
 fi;
 
 # DEEP SLEEP ENHANCEMENT =========================================#
