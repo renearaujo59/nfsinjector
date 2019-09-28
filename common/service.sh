@@ -2866,7 +2866,7 @@ fi;
 swapOFF() {
 if [ -e /dev/block/zram0 ]; then
  swapoff /dev/block/zram0
- #setprop vnswap.enabled false
+ setprop vnswap.enabled false
  setprop ro.config.zram false
  setprop ro.config.zram.support false
  setprop zram.disksize 0
@@ -2874,7 +2874,7 @@ if [ -e /dev/block/zram0 ]; then
 fi;
 if [ -e /dev/block/zram1 ]; then
  swapoff /dev/block/zram1
- #setprop vnswap.enabled false
+ setprop vnswap.enabled false
  setprop ro.config.zram false
  setprop ro.config.zram.support false
  setprop zram.disksize 0
@@ -2882,7 +2882,7 @@ if [ -e /dev/block/zram1 ]; then
 fi;
 if [ -e /dev/block/zram2 ]; then
  swapoff /dev/block/zram2
- #setprop vnswap.enabled false
+ setprop vnswap.enabled false
  setprop ro.config.zram false
  setprop ro.config.zram.support false
  setprop zram.disksize 0
@@ -2898,7 +2898,7 @@ if [ -e /dev/block/zram0 ]; then
  mkswap /dev/block/zram0
  swapon /dev/block/zram0
  #sysctl -e -w vm.swappiness=20
- #setprop vnswap.enabled true
+ setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
  setprop zram.disksize $ZR
@@ -2911,7 +2911,7 @@ if [ -e /dev/block/zram1 ]; then
  mkswap /dev/block/zram1
  swapon /dev/block/zram1
  #sysctl -e -w vm.swappiness=20
- #setprop vnswap.enabled true
+ setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
  setprop zram.disksize $ZR
@@ -2924,7 +2924,7 @@ if [ -e /dev/block/zram2 ]; then
  mkswap /dev/block/zram2
  swapon /dev/block/zram2
  #sysctl -e -w vm.swappiness=20
- #setprop vnswap.enabled true
+ setprop vnswap.enabled true
  setprop ro.config.zram true
  setprop ro.config.zram.support true
  setprop zram.disksize $ZR
@@ -2980,11 +2980,11 @@ elif [ -e /sys/kernel/mm/ksm/run ]; then
  echo "* KSM = Disabled *" |  tee -a $LOG;
 fi;
 
-#if [ -e /dev/block/vnswap0 ]; then
- #swapoff /dev/block/vnswap0
- #setprop vnswap.enabled false
-# echo "* Touchwiz Samsung Swap = Disabled *" |  tee -a $LOG;
-#fi;
+if [ -e /dev/block/vnswap0 ]; then
+ swapoff /dev/block/vnswap0
+ setprop vnswap.enabled false
+ echo "* Touchwiz Samsung Swap = Disabled *" |  tee -a $LOG;
+fi;
 
 # DEEP SLEEP ENHANCEMENT =========================================#
 

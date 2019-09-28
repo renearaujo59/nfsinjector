@@ -285,3 +285,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V7.6
 - Hotfix For PUBG Detection
+
+### V7.7
+- Hotfix For VnSwap
