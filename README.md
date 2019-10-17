@@ -291,3 +291,12 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V7.8
 - Hotfix Zram/Zswap Part
+
+### V8.0
+- Add CodeName : Infinite
+- Update VM & LMK
+- Update Gpu Optimizer for AdrenoBoost
+- Update Hmp/Eas Specific Values
+- Clean / Fix Script
+- Add Support Intelliactive 
+- Update NetBoost
