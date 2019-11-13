@@ -3,6 +3,7 @@
 </p>
 
 # Injector
+<p align="center"><img src="https://raw.githubusercontent.com/Magisk-Modules-Repo/nfsinjector/master/nfs.png"></p>
 A Magisk module which aims to improve kernel/RAM management, by using values between performance and battery savings.
 Flash, and forget.
 
