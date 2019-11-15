@@ -13,7 +13,7 @@ Flash, and forget.
 
 # Disclaimer
 This program is distributed in the hope that it will be useful
-I am not responsible for bricked devices, dead SD cards, corrupted partition, nuclear disasters
+I am not responsible for bricked devices, dead SD cards, corrupted partition, nuclear disasters lmao
 No to upload on additionals clouds
 
 ## Introduction
@@ -31,6 +31,8 @@ This Module is Universal , It works on all OS with all kernels ( HMP / EAS ).
 [XDA](https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231)
 
 ## Requirements
+- ARMv7 (armeabi-v7a)
+- ARMv8 (arm64-v8a)
 - Magisk v18.1+ (if not, it should install directly to system)
 - [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
@@ -64,6 +66,7 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ## Credits 
 - NFS Lead Developer - [K1ks](https://t.me/K1ks1)
 - Lead Developer Assistance - [Hafiz](https://t.me/HafizZiq)
+- Graphic Designer - [xLidz](https://t.me/xlidz)
 - Magisk Developer - [Topjohnwu](https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445)
 - Unity Template Developers - [Zackptg5 and Ahrion](https://forum.xda-developers.com/android/software/module-audio-modification-library-t3579612).
 
