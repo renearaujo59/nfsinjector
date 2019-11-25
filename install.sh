@@ -92,4 +92,4 @@ unity_custom() {
   : # Remove this if adding to this function
 }
 
-# Custom Functions for Install AND Uninstall - You can put them herem here
+# Custom Functions for Install AND Uninstall - You can put them here
