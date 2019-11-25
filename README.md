@@ -304,3 +304,15 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Clean / Fix Script
 - Add Support Intelliactive 
 - Update NetBoost
+
+### V8.5
+- Add CodeName : Paragon
+- Encrypted Version For Kangers
+- Breaker Updated for LS
+- Update VM & LMK
+- Update Calculation IO Blocks 
+- Update System Proprety Accessory
+- Update Kernel Task
+- Zram & Simple Gpu Support Over 
+- Sync No More Disabled by Default
+- Total Check Script

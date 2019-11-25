@@ -83,24 +83,8 @@ print_modname() {
 }
 
 set_permissions() {
-  : # Remove this if adding to this function
-
-  # Note that all files/folders have the $UNITY prefix - keep this prefix on all of your files/folders
-  # Also note the lack of '/' between variables - preceding slashes are already included in the variables
-  # Use $VEN for vendor (Do not use /system$VEN, the $VEN is set to proper vendor path already - could be /vendor, /system/vendor, etc.)
-
-  # Some examples:
-  
-  # For directories (includes files in them):
-  # set_perm_recursive  <dirname>                <owner> <group> <dirpermission> <filepermission> <contexts> (default: u:object_r:system_file:s0)
-  
-  # set_perm_recursive $UNITY/system/lib 0 0 0755 0644
-  # set_perm_recursive $UNITY$VEN/lib/soundfx 0 0 0755 0644
-
-  # For files (not in directories taken care of above)
-  # set_perm  <filename>                         <owner> <group> <permission> <contexts> (default: u:object_r:system_file:s0)
-  
-  # set_perm $UNITY/system/lib/libart.so 0 0 0644
+  set_perm $MODPATH/system/etc/nfs/nfs1 0 2000 0755
+  set_perm $MODPATH/system/etc/nfs/nfs2 0 2000 0755
 }
 
 # Custom Variables for Install AND Uninstall - Keep everything within this function - runs before uninstall/install
@@ -108,4 +92,4 @@ unity_custom() {
   : # Remove this if adding to this function
 }
 
-# Custom Functions for Install AND Uninstall - You can put them here
+# Custom Functions for Install AND Uninstall - You can put them herem here
