@@ -316,3 +316,12 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Zram & Simple Gpu Support Over 
 - Sync No More Disabled by Default
 - Total Check Script
+
+### V8.6
+- Add CodeName : Paragon
+- Increase VM For Ultra / Balanced
+- Update IO Scheduler Blocks
+- Update Hmp / Eas Specific Values
+- Increase AdrenoBoost Values
+- Add Support For Stune Off
+- Fix Partial Log
