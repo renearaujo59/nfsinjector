@@ -329,9 +329,11 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ### V8.7
 - Add CodeName : Paragon
 - Hotfix VM Value
-- Add Thermal Switch Support
-- Update Minfree/Mfk For Ram Management
 - Update IO Scheduler Blocks
 - Add Swappiness Value Control
 - Rcu & Reference Amount Mem Removed
-- Misc.
+
+### V8.8
+- Add CodeName : Paragon
+- Update LMK
+- Update IO Scheduler Blocks
