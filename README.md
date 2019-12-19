@@ -14,6 +14,7 @@ Flash, and forget.
 # Disclaimer
 This program is distributed in the hope that it will be useful
 I am not responsible for bricked devices, dead SD cards, corrupted partition, nuclear disasters lmao
+
 No to upload on additionals clouds
 
 ## Introduction
@@ -45,20 +46,43 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ## Testers 
 
 @D347HW15H
-@player65
+@KilayoRed
+@xLidz
 @Apitpro
+@iSawJig
 @im_simple_man
 @AzSuperbored
-@KilayoRed
-@xlidz
-@HarshalRaj
-@Chipis
-@TarangKarpe
+@illuminatiCat
+@Savvy1968
+ChipiL
 @chrisdrakos
-@Kookieya
-@Whiplesh
-@trushtushar
-@iSawJig
+
+## List devices are tested and run with NFS Injector™ Beta :
+
+- Redmi Note 5 Pro
+- Redmi K20 Pro
+- Redmi Note 7
+- Redmi 6A
+- Redmi Note 5A Prime
+- Pocophone F1
+- Mi Max 3
+- Redmi 5A
+- Pixel 2 XL
+- Pixel 4 XL
+- Samsung Galaxy S5
+- Samsung Galaxy S7/Edge
+- Samsung Galaxy Note 8
+- Samsung Galaxy Note 3
+- Samsung Galaxy S9+
+- Samsung Galaxy Note 4
+- Samsung Galaxy Alpha
+- Samsung Galaxy J7 Pro
+- Samsung Galaxy J1 2016
+- OnePlus 3T
+- OnePlus 5
+- OnePlus 6/6T
+- HTC U12+
+- Moto X4
 
 ## NFS - Injector Telegram
 [Telegram Group](https://t.me/nfsinjector)
@@ -341,3 +365,15 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Update LMK
 - Update IO Scheduler Blocks
 - Misc.
+
+### V9.0
+- Add CodeName : Titan
+- Add Support Cdg/Bbr Tcp  
+- Update HMP/EAS Specific Values
+- Update CPU Database
+- Update CPU_Boost 
+- Update Thermal Base
+- Update VM & LMK & MFK$ Calculation
+- Remove Breaker
+- Full Script Revision
+- Misc

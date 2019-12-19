@@ -83,8 +83,8 @@ print_modname() {
 }
 
 set_permissions() {
-  set_perm $MODPATH/system/etc/nfs/nfs1 0 2000 0755
-  set_perm $MODPATH/system/etc/nfs/nfs2 0 2000 0755
+  set_perm $MODPATH/system/etc/.titan/.titan1 0 2000 0755
+  set_perm $MODPATH/system/etc/.titan/.titan2 0 2000 0755
 }
 
 # Custom Variables for Install AND Uninstall - Keep everything within this function - runs before uninstall/install
