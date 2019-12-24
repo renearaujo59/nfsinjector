@@ -377,3 +377,9 @@ ChipiL
 - Remove Breaker
 - Full Script Revision
 - Misc
+
+### V9.5
+- Update LMK & MFK$ Calculation Balanced / Battery 
+- Update System Proprety Accessory
+- Add msmnile Prime Detection
+- Add More Stuffs in LowMemoryKiller
