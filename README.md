@@ -46,16 +46,15 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ## Testers 
 
 @D347HW15H
-@KilayoRed
+@iSawJig360
 @xLidz
-@Apitpro
-@iSawJig
-@im_simple_man
 @AzSuperbored
+@im_simple_man
+@Apitpro
+@KilayoRed
 @illuminatiCat
 @Savvy1968
-ChipiL
-@chrisdrakos
+@BullyMoymoy
 
 ## List devices are tested and run with NFS Injector™ Beta :
 
@@ -63,6 +62,7 @@ ChipiL
 - Redmi K20 Pro
 - Redmi Note 7
 - Redmi 6A
+- Redmi 4
 - Redmi Note 5A Prime
 - Pocophone F1
 - Mi Max 3
@@ -83,6 +83,8 @@ ChipiL
 - OnePlus 6/6T
 - HTC U12+
 - Moto X4
+- Asus Max Pro M1
+- Asus Max Pro M2
 
 ## NFS - Injector Telegram
 [Telegram Group](https://t.me/nfsinjector)
@@ -379,7 +381,14 @@ ChipiL
 - Misc
 
 ### V9.5
+- Add CodeName : Santa
 - Update LMK & MFK$ Calculation Balanced / Battery 
 - Update System Proprety Accessory
 - Add msmnile Prime Detection
 - Add More Stuffs in LowMemoryKiller
+- Misc.
+
+### V10.0
+- Add CodeName : Santa
+- HotFix Selinux Things
+- Misc.
