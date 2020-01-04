@@ -24,7 +24,7 @@ Improve Standby , as well as screen battery life - A smooth and fluid , overal e
 
 Fix PUBG Mobil Lag ( Others Games also ) 
 
-This Module is Universal , It works on all OS with all kernels ( HMP / EAS ). 
+This Module is Universal , It works on all OS with all kernels (EAS/HMP), Except on Shit/Retarded Kernel. 
 
 ## Thread 
 ★[MODULE][NFS-INJECTOR][PowerFull And Advanced Management Kernel/Ram][pubgfix]
@@ -34,7 +34,8 @@ This Module is Universal , It works on all OS with all kernels ( HMP / EAS ).
 ## Requirements
 - ARMv7 (armeabi-v7a)
 - ARMv8 (arm64-v8a)
-- Magisk v18.1+ (if not, it should install directly to system)
+- x64bit (x86_64)
+- Magisk v19+
 - [Magisk Release](https://github.com/topjohnwu/Magisk/releases)
 
 ## Supporter Suggestions
@@ -391,4 +392,22 @@ All NFS Members , without Their Help , NFS wouldn't be great
 ### V10.0
 - Add CodeName : Santa
 - HotFix Selinux Things
+- Misc.
+
+### V11
+- Add CodeName : BrainStorm
+- Update to Unity 5.0
+- Implementation Of The Basic / Pro Version
+- Update Boot Complete Script
+- Update Smart_Control
+- Add X86 Soc Support
+- Update Cpu Scheduler
+- Adjustments VM & LMK & MFK$
+- Update NetBoost and Add support Buffersize/Ril Multimode
+- Add Analytics & Ads Google Disabler
+- Add Open GL Renderer Tuner
+- Add Doze Custom
+- Full Fix Revision
+- Fix After Boot
+- Update Waiting Time
 - Misc.
