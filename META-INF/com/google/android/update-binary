@@ -28,9 +28,23 @@ print_modname() {
   len=`echo -n $MODNAME | wc -c`
   len=$((len + 2))
   local pounds=`printf "%${len}s" | tr ' ' '*'`
-  ui_print "$pounds"
-  ui_print " $MODNAME "
-  ui_print "$pounds"
+  ui_print "___  | / /__  ____/_  ___/"
+  ui_print "__   |/ /__  /_   _____ "
+  ui_print "_  /|  / _  __/   ____/ /"
+  ui_print "/_/ |_/  /_/      /____/"           
+  ui_print " "
+  ui_print "* ϟ NFS-INJECTOR ϟ *"
+  ui_print " "
+  ui_print "* KING OF MODS *"
+  ui_print " "
+  ui_print "* Module For Forcefulness & Energy Aware *"
+  ui_print " "
+  ui_print "* Flash , Reboot And Forget *"
+  ui_print " "
+  ui_print "* Official Telegram Group @nfsinjector *"
+  ui_print " " 
+  ui_print "* By K1KS & Team *"
+  ui_print ""
   if $MAGISK; then
     ui_print "*******************"
     ui_print " Powered by Magisk "

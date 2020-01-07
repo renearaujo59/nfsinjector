@@ -411,3 +411,6 @@ All NFS Members , without Their Help , NFS wouldn't be great
 - Fix After Boot
 - Update Waiting Time
 - Misc.
+
+### V11.1
+- Fix Magisk Issue

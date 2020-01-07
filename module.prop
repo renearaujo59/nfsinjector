@@ -1,7 +1,7 @@
-id=BrainStorm
+id=nfsinjector
 name=NFS INJECTOR @nfsinjector
-version=v11
-versionCode=1042
+version=v11.1
+versionCode=1050
 author=K1ks
 description=Powerful And Advanced Kernel / RAM Manager For Efficiency and Energy
 support=https://forum.xda-developers.com/apps/magisk/module-nfs-injectorv1-t3857231
