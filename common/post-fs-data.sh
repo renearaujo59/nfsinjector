@@ -32,4 +32,4 @@ fi;
 
 chmod 0444 $FFC
 chmod 0444 $FL
-exit 0#
+exit 0

@@ -414,3 +414,4 @@ All NFS Members , without Their Help , NFS wouldn't be great
 
 ### V11.1
 - Fix Magisk Issue
+- Fix Mor
